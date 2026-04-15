@@ -250,7 +250,7 @@ export function PropertyDetail() {
                 Consultar por WhatsApp
               </a>
               <a
-                href="tel:+50222222222"
+                href="tel:+50252026514"
                 className="w-full py-4 flex items-center justify-center gap-3 border border-[#C9A84C] text-[#C9A84C] hover:bg-[#C9A84C] hover:text-black transition-all duration-300"
                 style={{ fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase" }}
               >
@@ -298,7 +298,7 @@ export function PropertyDetail() {
               <MessageCircle size={14} /> WhatsApp
             </a>
             <a
-              href="tel:+50222222222"
+              href="tel:+50252026514"
               className="flex items-center gap-2 px-6 py-3 border border-[#C9A84C] text-[#C9A84C] hover:bg-[#C9A84C] hover:text-black transition-all duration-300"
               style={{ fontSize: "0.65rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" }}
             >
