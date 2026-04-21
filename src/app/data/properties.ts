@@ -19,7 +19,7 @@ export interface Property {
 
 const BASE_PATH = "/properties-img";
 
-export const WHATSAPP_NUMBER = "50252026514";
+export const WHATSAPP_NUMBER = "50239144422";
 
 export function buildWhatsAppUrl(property: Property) {
   const action = property.listingType === "venta" ? "comprar" : "rentar";
@@ -33,7 +33,7 @@ export const properties: Property[] = [
   // --- PROPIEDAD 1: APARTAMENTO 901 ---
   {
     id: 1,
-    title: "Apartamento Vista Quince - Nivel 901",
+    title: "Apartamento en Vista Hermosa I",
     type: "Apartamento",
     listingType: "venta",
     address: "Zona 15, Guatemala City",
@@ -63,7 +63,7 @@ export const properties: Property[] = [
     title: "Penthouse de Lujo para Estrenar",
     type: "Apartamento",
     listingType: "venta",
-    address: "Zona 15 (Nivel 14), Guatemala City",
+    address: "Zona 15, Guatemala City",
     zona: 15,
     price: "$ 434,215.02",
     beds: 3,
@@ -88,7 +88,7 @@ export const properties: Property[] = [
   // --- PROPIEDAD 3: APARTAMENTO RENTA NIVEL 6 ---
   {
     id: 3,
-    title: "Apartamento Nivel 6 - Zona 15",
+    title: "Apartamento en renta Zona 15",
     type: "Apartamento",
     listingType: "renta",
     address: "Zona 15, Guatemala City",

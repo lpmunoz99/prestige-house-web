@@ -82,11 +82,11 @@ export function Navbar() {
           <div className="hidden lg:flex items-center gap-2">
             <Phone className="text-[#C9A84C]" size={14} />
             <a
-              href="tel:+50252026514"
+              href="tel:+50239144422"
               className="text-[#C9A84C] tracking-wider"
               style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.75rem" }}
             >
-              +502 5202-6514
+              +502 3914-4422
             </a>
           </div>
 
@@ -122,11 +122,11 @@ export function Navbar() {
         <div className="mt-10 flex items-center gap-2">
           <Phone className="text-[#C9A84C]" size={16} />
           <a
-            href="tel:+50252026514"
+            href="tel:+50239144422"
             className="text-[#C9A84C]"
             style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.85rem" }}
           >
-            +502 5202-6514
+            +502 3914-4422
           </a>
         </div>
       </div>

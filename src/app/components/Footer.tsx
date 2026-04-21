@@ -99,7 +99,7 @@ export function Footer() {
                   className="text-white/40"
                   style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.7rem", lineHeight: 1.6 }}
                 >
-                  +502 5202-6514
+                  +502 3914-4422
                 </p>
               </li>
               <li className="flex items-start gap-3">

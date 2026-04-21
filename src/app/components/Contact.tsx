@@ -60,7 +60,7 @@ export function Contact() {
               {
                 icon: Phone,
                 label: "Teléfono",
-                value: "+502 5202-6514",
+                value: "+502 3914-4422",
                 sub: "Lun - Vie, 9am - 6pm",
               },
               {
