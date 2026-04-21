@@ -28,16 +28,6 @@ export function Hero() {
 
       {/* Content */}
       <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
-        
-        {/* --- LOGO CENTRAL IMPACTANTE --- */}
-        <div className="flex justify-center mb-10">
-          <img 
-            src="/logo.png" 
-            alt="Prestige House Logo" 
-            // Aumentado a h-32 en móvil y h-60 en escritorio (240px aprox)
-            className="h-32 w-32 sm:h-60 sm:w-60 object-contain drop-shadow-[0_0_25px_rgba(201,168,76,0.4)] transition-transform duration-700 hover:scale-105"
-          />
-        </div>
 
         {/* Eyebrow */}
         <div className="flex items-center justify-center gap-4 mb-6">
