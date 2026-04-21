@@ -72,8 +72,8 @@ export function Contact() {
               {
                 icon: MapPin,
                 label: "Oficina",
-                value: "Zona 10, Guatemala City",
-                sub: "Blvd. Los Próceres 20-10",
+                value: "14 Ave. 11-16",
+                sub: "Zona 2, Ciudad de Guatemala",
               },
             ].map((item) => (
               <div key={item.label} className="flex items-start gap-4 group">

@@ -117,7 +117,7 @@ export function Footer() {
                   className="text-white/40"
                   style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.7rem", lineHeight: 1.6 }}
                 >
-                  Blvd. Los Próceres 20-10<br />Zona 10, Guatemala City
+                  14 Ave. 11-16<br />Zona 2, Ciudad de Guatemala
                 </p>
               </li>
             </ul>

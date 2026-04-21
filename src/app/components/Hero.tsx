@@ -11,7 +11,12 @@ export function Hero() {
   return (
     <section
       id="inicio"
-      className="relative min-h-screen w-full flex items-center justify-center overflow-hidden pt-32 pb-16 lg:pt-0 lg:pb-0"
+      /* CAMBIO CLAVE: 
+        pt-36 para móvil (asegura espacio sobre el logo del celular)
+        lg:pt-48 para PC (crea un margen fijo e inquebrantable de ~192px desde arriba)
+        Así, en una notebook pequeña, el texto no podrá "subir" más allá del navbar.
+      */
+      className="relative min-h-screen w-full flex items-center justify-center overflow-hidden pt-36 pb-16 lg:pt-48 lg:pb-20"
     >
       {/* Background Image */}
       <div className="absolute inset-0">
@@ -27,14 +32,14 @@ export function Hero() {
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#C9A84C] to-transparent" />
 
       {/* Content */}
-      <div className="relative z-10 text-center px-6 max-w-5xl mx-auto mt-10 lg:mt-0">
+      <div className="relative z-10 text-center px-6 max-w-5xl mx-auto mt-10 lg:mt-4">
 
         {/* Eyebrow */}
         <div className="flex items-center justify-center gap-4 mb-6">
           <div className="h-px w-12 bg-[#C9A84C]" />
           <p
             className="text-[#C9A84C] tracking-[0.4em] uppercase"
-            style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.75rem", fontWeight: 500 }}
+            style={{ fontFamily: "Montserrat Alternates, sans-serif", fontSize: "0.75rem", fontWeight: 500 }}
           >
             Inmobiliaria de Prestigio
           </p>
@@ -85,7 +90,7 @@ export function Hero() {
               if (el) el.scrollIntoView({ behavior: "smooth" });
             }}
             className="px-10 py-4 bg-[#C9A84C] text-black hover:bg-[#D4BF6A] transition-all duration-300 tracking-widest uppercase relative overflow-hidden group"
-            style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.7rem", fontWeight: 600 }}
+            style={{ fontFamily: "Montserrat Alternates, sans-serif", fontSize: "0.7rem", fontWeight: 600 }}
           >
             <span className="relative z-10">Ver Propiedades</span>
             <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500" />
@@ -97,7 +102,7 @@ export function Hero() {
               if (el) el.scrollIntoView({ behavior: "smooth" });
             }}
             className="px-10 py-4 border border-[#C9A84C]/60 text-[#C9A84C] hover:bg-[#C9A84C]/10 transition-all duration-300 tracking-widest uppercase"
-            style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.7rem", fontWeight: 500 }}
+            style={{ fontFamily: "Montserrat Alternates, sans-serif", fontSize: "0.7rem", fontWeight: 500 }}
           >
             Contáctenos
           </button>
@@ -118,7 +123,7 @@ export function Hero() {
               </p>
               <p
                 className="text-white/50 mt-1"
-                style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.6rem", letterSpacing: "0.1em" }}
+                style={{ fontFamily: "Montserrat Alternates, sans-serif", fontSize: "0.6rem", letterSpacing: "0.1em" }}
               >
                 {stat.label}
               </p>
