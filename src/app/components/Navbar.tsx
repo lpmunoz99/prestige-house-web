@@ -35,22 +35,27 @@ export function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-10 flex items-center justify-between h-20">
-          {/* Logo */}
+          {/* Logo - Tamaño Ajustado */}
           <button
             onClick={() => handleNav("#inicio")}
-            className="flex items-center gap-3 group"
+            className="flex items-center gap-4 group" // Aumenté el gap de 3 a 4
           >
-            <img src="/logo.png" alt="Prestige House" className="h-12 w-12 object-contain" />
+            <img 
+              src="/logo.png" 
+              alt="Prestige House" 
+              className="h-22 w-22 object-contain transition-transform duration-300 group-hover:scale-105" 
+              // Cambiado de h-12 w-12 a h-16 w-16. Añadido un pequeño efecto hover.
+            />
             <div className="hidden sm:block">
               <p
-                className="text-[#C9A84C] tracking-[0.25em] uppercase"
-                style={{ fontFamily: "Playfair Display, serif", fontSize: "0.7rem" }}
+                className="text-[#C9A84C] tracking-[0.3em] uppercase" // Un poco más de tracking
+                style={{ fontFamily: "Playfair Display, serif", fontSize: "0.85rem" }} // Subí de 0.7rem a 0.85rem
               >
                 Prestige
               </p>
               <p
-                className="text-white tracking-[0.35em] uppercase"
-                style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.6rem", fontWeight: 300 }}
+                className="text-white tracking-[0.4em] uppercase" // Un poco más de tracking
+                style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem", fontWeight: 300 }} // Subí de 0.6rem a 0.65rem
               >
                 House
               </p>

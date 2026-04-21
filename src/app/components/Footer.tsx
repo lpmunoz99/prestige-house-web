@@ -8,8 +8,6 @@ const navLinks = [
   { label: "Contacto", href: "#contacto" },
 ];
 
-const zones = [1, 4, 10, 11, 13, 15, 16];
-
 export function Footer() {
   const handleNav = (href: string) => {
     const el = document.querySelector(href);
@@ -26,7 +24,7 @@ export function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-5">
-              <img src="/logo.png" alt="Prestige House" className="h-14 w-14 object-contain" />
+              <img src="/logo.png" alt="Prestige House" className="h-22 w-22 object-contain" />
               <div>
                 <p
                   className="text-[#C9A84C] tracking-[0.25em] uppercase"
@@ -80,30 +78,6 @@ export function Footer() {
                   >
                     <span className="h-px w-0 group-hover:w-4 bg-[#C9A84C] transition-all duration-300" />
                     {link.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Zones */}
-          <div>
-            <h4
-              className="text-[#C9A84C] mb-5 tracking-[0.2em] uppercase"
-              style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem", fontWeight: 600 }}
-            >
-              Zonas que Atendemos
-            </h4>
-            <ul className="space-y-3">
-              {zones.map((z) => (
-                <li key={z}>
-                  <button
-                    onClick={() => handleNav("#propiedades")}
-                    className="text-white/40 hover:text-[#C9A84C] transition-colors duration-300 flex items-center gap-2 group"
-                    style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.7rem" }}
-                  >
-                    <span className="h-px w-0 group-hover:w-4 bg-[#C9A84C] transition-all duration-300" />
-                    Zona {z} — Guatemala City
                   </button>
                 </li>
               ))}
