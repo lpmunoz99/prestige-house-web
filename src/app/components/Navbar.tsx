@@ -43,7 +43,7 @@ export function Navbar() {
             <img 
               src="/logo.png" 
               alt="Prestige House" 
-              className="h-26 w-26 object-contain transition-transform duration-300 group-hover:scale-105" 
+              className="h-20 w-20 object-contain" 
               // Cambiado de h-12 w-12 a h-16 w-16. Añadido un pequeño efecto hover.
             />
             <div className="hidden sm:block">
