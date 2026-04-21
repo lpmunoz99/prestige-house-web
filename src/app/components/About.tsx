@@ -47,7 +47,7 @@ export function About() {
             
             <div className="absolute bottom-8 -right-6 bg-[#C9A84C] p-6 hidden lg:block shadow-xl">
               <p className="text-black font-bold text-3xl" style={{ fontFamily: "Playfair Display, serif", lineHeight: 1 }}>
-                10+
+                3+
               </p>
               <p className="text-black/80 mt-1 uppercase text-[0.6rem] tracking-[0.15em]" style={{ fontFamily: "Montserrat, sans-serif" }}>
                 Años de<br />Experiencia
@@ -65,7 +65,7 @@ export function About() {
             </div>
 
             <h2 className="text-white mb-6" style={{ fontFamily: "Playfair Display, serif", fontSize: "clamp(1.8rem, 4vw, 2.8rem)", fontWeight: 600, lineHeight: 1.2 }}>
-              La Excelencia en <span style={{ color: "#C9A84C" }}>Bienes Raíces</span> desde 2014
+              La Excelencia en <span style={{ color: "#C9A84C" }}>Bienes Raíces</span>
             </h2>
 
             <p className="text-white/60 mb-6" style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.1rem", lineHeight: 1.8 }}>
