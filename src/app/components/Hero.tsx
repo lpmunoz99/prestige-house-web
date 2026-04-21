@@ -104,10 +104,9 @@ export function Hero() {
         </div>
 
         {/* Stats */}
-        <div className="mt-16 grid grid-cols-3 gap-8 max-w-lg mx-auto">
+        <div className="mt-12 flex justify-center gap-12 sm:gap-20 max-w-lg mx-auto">
           {[
             { value: "3+", label: "Años de experiencia" },
-            { value: "500+", label: "Propiedades vendidas" },
             { value: "98%", label: "Clientes satisfechos" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">

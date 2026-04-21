@@ -72,25 +72,6 @@ export function About() {
               En Prestige House nos dedicamos a conectar a nuestros clientes con
               las propiedades más exclusivas de Guatemala.
             </p>
-
-            <div className="mt-8 grid grid-cols-2 gap-6 lg:gap-8">
-              <div>
-                <p className="text-[#C9A84C] text-3xl sm:text-4xl font-semibold" style={{ fontFamily: "Playfair Display, serif" }}>
-                  500+
-                </p>
-                <p className="text-white/50 uppercase text-[0.55rem] sm:text-[0.65rem] tracking-[0.1em]" style={{ fontFamily: "Montserrat, sans-serif" }}>
-                  Propiedades Vendidas
-                </p>
-              </div>
-              <div>
-                <p className="text-[#C9A84C] text-3xl sm:text-4xl font-semibold" style={{ fontFamily: "Playfair Display, serif" }}>
-                  150+
-                </p>
-                <p className="text-white/50 uppercase text-[0.55rem] sm:text-[0.65rem] tracking-[0.1em]" style={{ fontFamily: "Montserrat, sans-serif" }}>
-                  Clientes Activos
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </section>
