@@ -30,32 +30,33 @@ export function Navbar() {
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isScrolled
-            ? "bg-[#0a0a0a] shadow-[0_2px_30px_rgba(0,0,0,0.6)]"
+            ? "bg-[#0a0a0a]/95 backdrop-blur-md shadow-[0_2px_30px_rgba(0,0,0,0.6)]"
             : "bg-transparent"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 flex items-center justify-between h-20">
-          {/* Logo - Tamaño Ajustado */}
+        {/* Ajuste: Cambié h-20 por py-2 para que el logo dicte la altura */}
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 flex items-center justify-between py-2">
+          {/* Logo */}
           <button
             onClick={() => handleNav("#inicio")}
-            className="flex items-center gap-4 group" // Aumenté el gap de 3 a 4
+            className="flex items-center gap-4 group"
           >
             <img 
               src="/logo.png" 
               alt="Prestige House" 
-              className="h-20 w-20 object-contain" 
-              // Cambiado de h-12 w-12 a h-16 w-16. Añadido un pequeño efecto hover.
+              // h-20 en móvil (80px) y h-28 en escritorio (112px)
+              className="h-20 w-auto sm:h-28 object-contain transition-transform duration-300 group-hover:scale-105" 
             />
             <div className="hidden sm:block">
               <p
-                className="text-[#C9A84C] tracking-[0.3em] uppercase" // Un poco más de tracking
-                style={{ fontFamily: "Playfair Display, serif", fontSize: "0.85rem" }} // Subí de 0.7rem a 0.85rem
+                className="text-[#C9A84C] tracking-[0.3em] uppercase"
+                style={{ fontFamily: "Playfair Display, serif", fontSize: "0.85rem" }}
               >
                 Prestige
               </p>
               <p
-                className="text-white tracking-[0.4em] uppercase" // Un poco más de tracking
-                style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem", fontWeight: 300 }} // Subí de 0.6rem a 0.65rem
+                className="text-white tracking-[0.4em] uppercase"
+                style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem", fontWeight: 300 }}
               >
                 House
               </p>
@@ -95,7 +96,7 @@ export function Navbar() {
             onClick={() => setMobileOpen(!mobileOpen)}
             className="lg:hidden text-white p-2"
           >
-            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+            {mobileOpen ? <X size={32} /> : <Menu size={32} />}
           </button>
         </div>
       </nav>

@@ -11,7 +11,7 @@ export function Hero() {
   return (
     <section
       id="inicio"
-      className="relative min-h-screen w-full flex items-center justify-center overflow-hidden pt-32 pb-16 lg:pt-0 lg:pb-0"
+      className="relative min-h-screen w-full flex items-center justify-center overflow-hidden pt-24 pb-12 lg:pt-0 lg:pb-0"
     >
       {/* Background Image */}
       <div className="absolute inset-0">
@@ -27,16 +27,7 @@ export function Hero() {
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#C9A84C] to-transparent" />
 
       {/* Content */}
-      <div className="relative z-10 text-center px-6 max-w-5xl mx-auto mt-10 lg:mt-0">
-
-        {/* --- LOGO CENTRAL GIGANTE --- */}
-        <div className="flex justify-center mb-8">
-          <img 
-            src="/logo.png" 
-            alt="Prestige House Logo" 
-            className="w-40 sm:w-65 object-contain drop-shadow-[0_0_25px_rgba(201,168,76,0.3)] transition-transform duration-700 hover:scale-105"
-          />
-        </div>
+      <div className="relative z-10 text-center px-6 max-w-5xl mx-auto mt-8 lg:mt-0">
 
         {/* Eyebrow */}
         <div className="flex items-center justify-center gap-4 mb-6">

@@ -24,7 +24,7 @@ export function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-5">
-              <img src="/logo.png" alt="Prestige House" className="h-22 w-22 object-contain" />
+              <img src="/logo.png" alt="Prestige House" className="h-28 w-28 object-contain" />
               <div>
                 <p
                   className="text-[#C9A84C] tracking-[0.25em] uppercase"
