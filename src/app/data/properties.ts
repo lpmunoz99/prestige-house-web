@@ -12,6 +12,10 @@ export interface Property {
   baths: number;
   area: number;
   images: string[];
+  video?: {
+    webm: string;
+    mp4: string;
+  };
   tag?: string;
   description: string;
   features: string[];
@@ -56,6 +60,10 @@ export const properties: Property[] = [
       `${BASE_PATH}/apt-901/apt-901_5.jpeg`, `${BASE_PATH}/apt-901/apt-901_6.jpeg`,
       `${BASE_PATH}/apt-901/apt-901_7.jpeg`, `${BASE_PATH}/apt-901/apt-901_8.jpeg`,
     ],
+    video: {
+      webm: `${BASE_PATH}/apt-901/alvento_final.webm`,
+      mp4: `${BASE_PATH}/apt-901/alvento_final.mp4`,
+    },
   },
   // --- PROPIEDAD 2: PENTHOUSE ---
   {

@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router";
-import { Bed, Bath, Maximize2, MapPin, ChevronDown, MessageCircle, ArrowRight } from "lucide-react";
 import { properties, buildWhatsAppUrl, VENTA_ZONAS, RENTA_ZONAS, type ListingType, type Property } from "../data/properties";
+import { Bed, Bath, Maximize2, MapPin, ChevronDown, MessageCircle, ArrowRight, Play } from "lucide-react";
 
 export function Properties() {
   const [activeTab, setActiveTab] = useState<ListingType>("venta");
@@ -184,17 +184,39 @@ function PropertyCard({
   onDetail: () => void;
 }) {
   const isRenta = property.listingType === "renta";
+  const [isHovered, setIsHovered] = useState(false); // Estado para controlar el hover
 
   return (
-    <div className="group relative bg-[#111111] border border-white/5 hover:border-[#C9A84C]/30 transition-all duration-500 flex flex-col">
+    <div 
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="group relative bg-[#111111] border border-white/5 hover:border-[#C9A84C]/30 transition-all duration-500 flex flex-col"
+    >
 
-      {/* Image */}
+      {/* Image / Video Container */}
       <div className="relative overflow-hidden h-56 cursor-pointer" onClick={onDetail}>
-        <img
-          src={property.images[0]}
-          alt={property.title}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-        />
+        
+        {/* Renderizado condicional: Video o Imagen */}
+        {property.video && isHovered ? (
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover transition-transform duration-700 scale-105"
+            poster={property.images[0]}
+          >
+            <source src={property.video.webm} type="video/webm" />
+            <source src={property.video.mp4} type="video/mp4" />
+          </video>
+        ) : (
+          <img
+            src={property.images[0]}
+            alt={property.title}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        )}
+
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
         {/* Listing type badge */}
@@ -205,12 +227,13 @@ function PropertyCard({
           </p>
         </div>
 
-        {/* Tag badge */}
-        {property.tag && (
-          <div className="absolute top-4 right-4 bg-black/70 border border-[#C9A84C]/50 px-3 py-1">
+        {/* Video Badge (Solo si tiene video) */}
+        {property.video && (
+          <div className="absolute top-4 right-4 bg-black/70 border border-[#C9A84C]/50 px-2 py-1 flex items-center gap-1.5">
+            <Play size={10} className="fill-[#C9A84C] text-[#C9A84C]" />
             <p className="text-[#C9A84C]"
               style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.52rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase" }}>
-              {property.tag}
+              Video
             </p>
           </div>
         )}
