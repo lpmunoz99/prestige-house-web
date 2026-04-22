@@ -112,6 +112,33 @@ export const properties: Property[] = [
       `${BASE_PATH}/rentanv6-z15/rentanv6-z15_7.jpeg`, `${BASE_PATH}/rentanv6-z15/rentanv6-z15_8.jpeg`,
     ],
   },
+  // --- PROPIEDAD 4: APARTAMENTO VENTA NIVEL 6 (PROMOCIÓN) ---
+  {
+    id: 4,
+    title: "Promoción Especial: Apartamento en venta en 6to. Nivel",
+    type: "Apartamento",
+    listingType: "venta",
+    address: "Zona 15, Guatemala City",
+    zona: 15,
+    price: "$ 388,847.87",
+    beds: 3,
+    baths: 3.5,
+    area: 172.74,
+    tag: "Promoción Especial",
+    description: "Excelente oportunidad de inversión. Apartamento en venta ubicado en 6to nivel con acabados de lujo. El precio ya incluye impuestos.",
+    features: [
+      "Sala - Comedor", "Cocina cerrada", "Balcón con vistas", 
+      "Baño de visitas", "Lavandería", "Cuarto de servicio completo", 
+      "Habitación Master con walk-in closet", "2 Habitaciones secundarias con baño", 
+      "2 Parqueos individuales", "Terraza y Churrasqueras", "Parque Infantil y Pet Friendly"
+    ],
+    images: [
+      `${BASE_PATH}/rentanv6-z15/rentanv6-z15_1.jpeg`, `${BASE_PATH}/rentanv6-z15/rentanv6-z15_2.jpeg`,
+      `${BASE_PATH}/rentanv6-z15/rentanv6-z15_3.jpeg`, `${BASE_PATH}/rentanv6-z15/rentanv6-z15_4.jpeg`,
+      `${BASE_PATH}/rentanv6-z15/rentanv6-z15_5.jpeg`, `${BASE_PATH}/rentanv6-z15/rentanv6-z15_6.jpeg`,
+      `${BASE_PATH}/rentanv6-z15/rentanv6-z15_7.jpeg`, `${BASE_PATH}/rentanv6-z15/rentanv6-z15_8.jpeg`,
+    ],
+  },
 ];
 
 export const VENTA_ZONAS = [...new Set(
