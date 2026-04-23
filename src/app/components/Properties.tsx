@@ -242,7 +242,7 @@ function PropertyCard({
         <div className="absolute bottom-3 right-3 flex items-center gap-1 bg-black/60 px-2 py-1">
           <div className="w-1 h-1 rounded-full bg-[#C9A84C]" />
           <p className="text-white/60" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.52rem" }}>
-            {property.images.length} fotos
+            {property.images.length + (property.video ? 1 : 0)} archivos
           </p>
         </div>
 

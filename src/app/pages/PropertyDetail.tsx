@@ -2,18 +2,23 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import {
   ArrowLeft, Bed, Bath, Maximize2, MapPin, MessageCircle,
-  ChevronLeft, ChevronRight, Check, Phone, Home
+  ChevronLeft, ChevronRight, Check, Phone, Home, Play
 } from "lucide-react";
 import { properties, buildWhatsAppUrl } from "../data/properties";
 
+// ─── Tipos para Multimedia ────────────────────────────────────────────────────
+type MediaItem = 
+  | { type: "image"; url: string }
+  | { type: "video"; webm: string; mp4: string; poster: string };
+
 // ─── Carousel ─────────────────────────────────────────────────────────────────
-function Carousel({ images, title }: { images: string[]; title: string }) {
+function Carousel({ media, title }: { media: MediaItem[]; title: string }) {
   const [current, setCurrent] = useState(0);
   const [thumbsStart, setThumbsStart] = useState(0);
   const VISIBLE_THUMBS = 5;
 
-  const prev = () => setCurrent(c => (c === 0 ? images.length - 1 : c - 1));
-  const next = () => setCurrent(c => (c === images.length - 1 ? 0 : c + 1));
+  const prev = () => setCurrent(c => (c === 0 ? media.length - 1 : c - 1));
+  const next = () => setCurrent(c => (c === media.length - 1 ? 0 : c + 1));
 
   useEffect(() => {
     if (current < thumbsStart) setThumbsStart(current);
@@ -22,27 +27,43 @@ function Carousel({ images, title }: { images: string[]; title: string }) {
 
   return (
     <div className="w-full">
-      {/* Main image */}
-      <div className="relative overflow-hidden w-full" style={{ height: "clamp(280px, 55vw, 580px)" }}>
-        <img
-          src={images[current]}
-          alt={`${title} - foto ${current + 1}`}
-          className="w-full h-full object-cover transition-all duration-500"
-        />
+      {/* Main image / video */}
+      <div className="relative overflow-hidden w-full bg-black" style={{ height: "clamp(280px, 55vw, 580px)" }}>
+        {media[current].type === "video" ? (
+          <video
+            key={media[current].webm}
+            controls
+            autoPlay
+            muted
+            loop
+            playsInline
+            poster={media[current].poster}
+            className="w-full h-full object-cover transition-all duration-500"
+          >
+            <source src={media[current].webm} type="video/webm" />
+            <source src={media[current].mp4} type="video/mp4" />
+          </video>
+        ) : (
+          <img
+            src={media[current].url}
+            alt={`${title} - archivo ${current + 1}`}
+            className="w-full h-full object-cover transition-all duration-500"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
 
         {/* Side arrows */}
-        {images.length > 1 && (
+        {media.length > 1 && (
           <>
             <button
               onClick={prev}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/60 border border-[#C9A84C]/50 flex items-center justify-center hover:bg-[#C9A84C]/20 transition-all duration-300"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/60 border border-[#C9A84C]/50 flex items-center justify-center hover:bg-[#C9A84C]/20 transition-all duration-300 z-10"
             >
               <ChevronLeft className="text-[#C9A84C]" size={20} />
             </button>
             <button
               onClick={next}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/60 border border-[#C9A84C]/50 flex items-center justify-center hover:bg-[#C9A84C]/20 transition-all duration-300"
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/60 border border-[#C9A84C]/50 flex items-center justify-center hover:bg-[#C9A84C]/20 transition-all duration-300 z-10"
             >
               <ChevronRight className="text-[#C9A84C]" size={20} />
             </button>
@@ -50,30 +71,42 @@ function Carousel({ images, title }: { images: string[]; title: string }) {
         )}
 
         {/* Counter */}
-        <div className="absolute bottom-4 right-4 bg-black/70 border border-[#C9A84C]/30 px-3 py-1">
+        <div className="absolute bottom-4 right-4 bg-black/70 border border-[#C9A84C]/30 px-3 py-1 z-10">
           <p className="text-white/70" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem" }}>
-            {current + 1} / {images.length}
+            {current + 1} / {media.length}
           </p>
         </div>
       </div>
 
       {/* Thumbnails */}
-      {images.length > 1 && (
-        <div className="flex gap-2 mt-3">
-          {images.map((src, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrent(i)}
-              className={`relative overflow-hidden flex-1 transition-all duration-300 ${
-                i === current
-                  ? "ring-2 ring-[#C9A84C] opacity-100"
-                  : "opacity-40 hover:opacity-70"
-              }`}
-              style={{ height: "72px" }}
-            >
-              <img src={src} alt={`thumb ${i + 1}`} className="w-full h-full object-cover" />
-            </button>
-          ))}
+      {media.length > 1 && (
+        <div className="flex gap-2 mt-3 overflow-hidden">
+          {media.slice(thumbsStart, thumbsStart + VISIBLE_THUMBS).map((item, i) => {
+            const actualIndex = thumbsStart + i;
+            return (
+              <button
+                key={actualIndex}
+                onClick={() => setCurrent(actualIndex)}
+                className={`relative overflow-hidden flex-1 transition-all duration-300 ${
+                  actualIndex === current
+                    ? "ring-2 ring-[#C9A84C] opacity-100"
+                    : "opacity-40 hover:opacity-70"
+                }`}
+                style={{ height: "72px" }}
+              >
+                <img 
+                  src={item.type === "video" ? item.poster : item.url} 
+                  alt={`thumb ${actualIndex + 1}`} 
+                  className="w-full h-full object-cover" 
+                />
+                {item.type === "video" && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                    <Play size={20} className="text-[#C9A84C] fill-[#C9A84C]" />
+                  </div>
+                )}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
@@ -85,6 +118,16 @@ export function PropertyDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const property = properties.find(p => p.id === Number(id));
+
+  // Generar array combinado de medios
+  const allMedia: MediaItem[] = property ? [
+    ...(property.video ? [{ 
+      type: "video" as const, 
+      ...property.video, 
+      poster: property.images[0] 
+    }] : []),
+    ...property.images.map(url => ({ type: "image" as const, url }))
+  ] : [];
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -159,7 +202,7 @@ export function PropertyDetail() {
         <div className="grid lg:grid-cols-5 gap-10 xl:gap-14">
           {/* ── Left: Carousel ──────────────────────────────────── */}
           <div className="lg:col-span-3">
-            <Carousel images={property.images} title={property.title} />
+            <Carousel media={allMedia} title={property.title} />
           </div>
 
           {/* ── Right: Info panel ───────────────────────────────── */}
@@ -250,7 +293,7 @@ export function PropertyDetail() {
                 Consultar por WhatsApp
               </a>
               <a
-                href="tel:+50252026514"
+                href="tel:+50239144422"
                 className="w-full py-4 flex items-center justify-center gap-3 border border-[#C9A84C] text-[#C9A84C] hover:bg-[#C9A84C] hover:text-black transition-all duration-300"
                 style={{ fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase" }}
               >
@@ -298,7 +341,7 @@ export function PropertyDetail() {
               <MessageCircle size={14} /> WhatsApp
             </a>
             <a
-              href="tel:+50252026514"
+              href="tel:+50239144422"
               className="flex items-center gap-2 px-6 py-3 border border-[#C9A84C] text-[#C9A84C] hover:bg-[#C9A84C] hover:text-black transition-all duration-300"
               style={{ fontSize: "0.65rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" }}
             >
