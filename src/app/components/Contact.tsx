@@ -61,13 +61,13 @@ export function Contact() {
                 icon: Phone,
                 label: "Teléfono",
                 value: "+502 3914-4422",
-                sub: "Lun - Vie, 9am - 6pm",
+                sub: "Lunes a Domingo",
               },
               {
                 icon: Mail,
                 label: "Correo Electrónico",
                 value: "prestigehousegt@gmail.com",
-                sub: "Respondemos en 24 horas",
+                sub: "",
               },
               {
                 icon: MapPin,

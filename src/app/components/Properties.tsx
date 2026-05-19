@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router";
-import { properties, buildWhatsAppUrl, VENTA_ZONAS, RENTA_ZONAS, type ListingType, type Property } from "../data/properties";
+import { properties, buildWhatsAppUrl, type ListingType, type Property } from "../data/properties";
 import { Bed, Bath, Maximize2, MapPin, ChevronDown, MessageCircle, ArrowRight, Play } from "lucide-react";
 
 export function Properties() {
@@ -11,7 +11,13 @@ export function Properties() {
   const navigate = useNavigate();
 
   const types = ["Todos", "Casa", "Apartamento"];
-  const zonas = activeTab === "venta" ? VENTA_ZONAS : RENTA_ZONAS;
+
+  // Zonas calculadas dinámicamente según el tab activo
+  const zonas = useMemo(() => {
+    return [...new Set(
+      properties.filter(p => p.listingType === activeTab).map(p => p.zona)
+    )].sort((a, b) => a - b);
+  }, [activeTab]);
 
   // Reset filters when tab changes
   const handleTabChange = (tab: ListingType) => {
@@ -175,7 +181,7 @@ export function Properties() {
   );
 }
 
-// ─── Property Card (no carousel — single image) ───────────────────────────────
+// ─── Property Card ────────────────────────────────────────────────────────────
 function PropertyCard({
   property,
   onDetail,
@@ -184,19 +190,16 @@ function PropertyCard({
   onDetail: () => void;
 }) {
   const isRenta = property.listingType === "renta";
-  const [isHovered, setIsHovered] = useState(false); // Estado para controlar el hover
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div 
+    <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="group relative bg-[#111111] border border-white/5 hover:border-[#C9A84C]/30 transition-all duration-500 flex flex-col"
     >
-
       {/* Image / Video Container */}
       <div className="relative overflow-hidden h-56 cursor-pointer" onClick={onDetail}>
-        
-        {/* Renderizado condicional: Video o Imagen */}
         {property.video && isHovered ? (
           <video
             autoPlay
@@ -227,7 +230,7 @@ function PropertyCard({
           </p>
         </div>
 
-        {/* Video Badge (Solo si tiene video) */}
+        {/* Video Badge */}
         {property.video && (
           <div className="absolute top-4 right-4 bg-black/70 border border-[#C9A84C]/50 px-2 py-1 flex items-center gap-1.5">
             <Play size={10} className="fill-[#C9A84C] text-[#C9A84C]" />
@@ -238,7 +241,7 @@ function PropertyCard({
           </div>
         )}
 
-        {/* Photo count hint */}
+        {/* Photo count */}
         <div className="absolute bottom-3 right-3 flex items-center gap-1 bg-black/60 px-2 py-1">
           <div className="w-1 h-1 rounded-full bg-[#C9A84C]" />
           <p className="text-white/60" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.52rem" }}>
@@ -246,7 +249,7 @@ function PropertyCard({
           </p>
         </div>
 
-        {/* Type & zona bottom left */}
+        {/* Type & zona */}
         <div className="absolute bottom-3 left-3">
           <p className="text-white/60" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.55rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
             {property.type} · Zona {property.zona}
