@@ -8,7 +8,7 @@ export const router = createBrowserRouter([
     Component: Home,
   },
   {
-    path: "/propiedad/:id",
+    path: "/propiedad/:code",
     Component: PropertyDetail,
   },
   {

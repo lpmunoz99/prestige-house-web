@@ -3,6 +3,20 @@ import { useNavigate } from "react-router";
 import { properties, buildWhatsAppUrl, type ListingType, type Property } from "../data/properties";
 import { Bed, Bath, Maximize2, MapPin, ChevronDown, MessageCircle, ArrowRight, Play } from "lucide-react";
 
+function getLocationLabel(property: Property): string {
+  if (property.location) {
+    const { sector, municipality, department } = property.location;
+    return `${sector ?? municipality}, ${department}`;
+  }
+  return `Zona ${property.zona}`;
+}
+
+function getStatusLabel(status: string) {
+  if (status === "rentado") return "Rentado";
+  if (status === "vendido") return "Vendido";
+  return null;
+}
+
 export function Properties() {
   const [activeTab, setActiveTab] = useState<ListingType>("venta");
   const [selectedZona, setSelectedZona] = useState<number | null>(null);
@@ -12,14 +26,14 @@ export function Properties() {
 
   const types = ["Todos", "Casa", "Apartamento"];
 
-  // Zonas calculadas dinámicamente según el tab activo
   const zonas = useMemo(() => {
     return [...new Set(
-      properties.filter(p => p.listingType === activeTab).map(p => p.zona)
+      properties
+        .filter(p => p.listingType === activeTab && p.zona > 0)
+        .map(p => p.zona)
     )].sort((a, b) => a - b);
   }, [activeTab]);
 
-  // Reset filters when tab changes
   const handleTabChange = (tab: ListingType) => {
     setActiveTab(tab);
     setSelectedZona(null);
@@ -40,7 +54,6 @@ export function Properties() {
     <section id="propiedades" className="bg-[#0a0a0a] py-24 px-6">
       <div className="max-w-7xl mx-auto">
 
-        {/* ── Section Header ─────────────────────────────────── */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-4 mb-4">
             <div className="h-px w-10 bg-[#C9A84C]" />
@@ -56,11 +69,10 @@ export function Properties() {
           </h2>
           <p className="text-white/50 max-w-lg mx-auto"
             style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.05rem", lineHeight: 1.7 }}>
-            Explore nuestra selección exclusiva en las mejores zonas de Guatemala City.
+            Explore nuestra selección exclusiva en las mejores zonas de Guatemala.
           </p>
         </div>
 
-        {/* ── Venta / Renta Tabs ─────────────────────────────── */}
         <div className="flex justify-center mb-10">
           <div className="flex border border-white/10">
             {(["venta", "renta"] as ListingType[]).map(tab => (
@@ -80,9 +92,7 @@ export function Properties() {
           </div>
         </div>
 
-        {/* ── Filters ────────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row items-center gap-4 mb-8">
-          {/* Type pills */}
           <div className="flex flex-wrap gap-2">
             {types.map(t => (
               <button
@@ -100,7 +110,6 @@ export function Properties() {
             ))}
           </div>
 
-          {/* Zona dropdown */}
           <div className="sm:ml-auto relative">
             <button
               onClick={() => setZonaDropdownOpen(!zonaDropdownOpen)}
@@ -142,7 +151,6 @@ export function Properties() {
           </div>
         </div>
 
-        {/* Result count */}
         {(selectedZona !== null || selectedType !== "Todos") && (
           <div className="flex items-center gap-3 mb-6">
             <p className="text-white/40" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem" }}>
@@ -158,7 +166,6 @@ export function Properties() {
           </div>
         )}
 
-        {/* ── Grid ───────────────────────────────────────────── */}
         {filtered.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-white/30" style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.2rem" }}>
@@ -169,9 +176,9 @@ export function Properties() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map(property => (
               <PropertyCard
-                key={property.id}
+                key={property.code}
                 property={property}
-                onDetail={() => navigate(`/propiedad/${property.id}`)}
+                onDetail={() => navigate(`/propiedad/${property.code}`)}
               />
             ))}
           </div>
@@ -181,7 +188,6 @@ export function Properties() {
   );
 }
 
-// ─── Property Card ────────────────────────────────────────────────────────────
 function PropertyCard({
   property,
   onDetail,
@@ -191,6 +197,8 @@ function PropertyCard({
 }) {
   const isRenta = property.listingType === "renta";
   const [isHovered, setIsHovered] = useState(false);
+  const isUnavailable = property.status === "rentado" || property.status === "vendido";
+  const statusLabel = property.status ? getStatusLabel(property.status) : null;
 
   return (
     <div
@@ -198,9 +206,8 @@ function PropertyCard({
       onMouseLeave={() => setIsHovered(false)}
       className="group relative bg-[#111111] border border-white/5 hover:border-[#C9A84C]/30 transition-all duration-500 flex flex-col"
     >
-      {/* Image / Video Container */}
       <div className="relative overflow-hidden h-56 cursor-pointer" onClick={onDetail}>
-        {property.video && isHovered ? (
+        {property.video && isHovered && !isUnavailable ? (
           <video
             autoPlay
             muted
@@ -216,23 +223,43 @@ function PropertyCard({
           <img
             src={property.images[0]}
             alt={property.title}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${isUnavailable ? "grayscale opacity-60" : ""}`}
           />
         )}
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
+        {/* Status overlay — rentado / vendido */}
+        {isUnavailable && statusLabel && (
+          <div className="absolute inset-0 flex items-center justify-center z-10">
+            <p
+              className="text-white border-2 border-white/60 px-6 py-2 tracking-[0.3em] uppercase bg-black/40"
+              style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.85rem", fontWeight: 700, transform: "rotate(-15deg)" }}
+            >
+              {statusLabel}
+            </p>
+          </div>
+        )}
+
         {/* Listing type badge */}
-        <div className={`absolute top-4 left-4 px-3 py-1 ${isRenta ? "bg-blue-600" : "bg-[#C9A84C]"}`}>
+        <div className={`absolute top-4 left-4 px-3 py-1 ${isRenta ? "bg-blue-600" : "bg-[#C9A84C]"} ${isUnavailable ? "opacity-50" : ""}`}>
           <p className={`${isRenta ? "text-white" : "text-black"}`}
             style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.52rem", fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase" }}>
             {isRenta ? "En Renta" : "En Venta"}
           </p>
         </div>
 
-        {/* Video Badge */}
-        {property.video && (
-          <div className="absolute top-4 right-4 bg-black/70 border border-[#C9A84C]/50 px-2 py-1 flex items-center gap-1.5">
+        {/* Reference code badge */}
+        <div className="absolute top-4 right-4 bg-black/70 border border-white/20 px-2 py-1">
+          <p className="text-white/70"
+            style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.5rem", fontWeight: 600, letterSpacing: "0.12em" }}>
+            Ref. {property.code}
+          </p>
+        </div>
+
+        {/* Video badge */}
+        {property.video && !isUnavailable && (
+          <div className="absolute top-11 right-4 bg-black/70 border border-[#C9A84C]/50 px-2 py-1 flex items-center gap-1.5">
             <Play size={10} className="fill-[#C9A84C] text-[#C9A84C]" />
             <p className="text-[#C9A84C]"
               style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.52rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase" }}>
@@ -241,7 +268,6 @@ function PropertyCard({
           </div>
         )}
 
-        {/* Photo count */}
         <div className="absolute bottom-3 right-3 flex items-center gap-1 bg-black/60 px-2 py-1">
           <div className="w-1 h-1 rounded-full bg-[#C9A84C]" />
           <p className="text-white/60" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.52rem" }}>
@@ -249,15 +275,13 @@ function PropertyCard({
           </p>
         </div>
 
-        {/* Type & zona */}
         <div className="absolute bottom-3 left-3">
           <p className="text-white/60" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.55rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
-            {property.type} · Zona {property.zona}
+            {property.type} · {getLocationLabel(property)}
           </p>
         </div>
       </div>
 
-      {/* Content */}
       <div className="p-6 flex flex-col flex-1">
         <h3
           className="text-white mb-1 group-hover:text-[#C9A84C] transition-colors duration-300 cursor-pointer"
@@ -274,12 +298,28 @@ function PropertyCard({
           </p>
         </div>
 
-        <p className="text-[#C9A84C] mb-5"
+        <p className={`mb-1 ${isUnavailable ? "text-white/30 line-through" : "text-[#C9A84C]"}`}
           style={{ fontFamily: "Playfair Display, serif", fontSize: "1.3rem", fontWeight: 600 }}>
           {property.price}
         </p>
 
-        {/* Details row */}
+        {property.priceDetails && !isUnavailable && (
+          <div className="flex gap-4 mb-4">
+            {property.priceDetails.reserva && (
+              <p className="text-white/30" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.58rem" }}>
+                Reserva: <span className="text-white/50">{property.priceDetails.reserva}</span>
+              </p>
+            )}
+            {property.priceDetails.enganche && (
+              <p className="text-white/30" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.58rem" }}>
+                Enganche: <span className="text-white/50">{property.priceDetails.enganche}</span>
+              </p>
+            )}
+          </div>
+        )}
+
+        {!property.priceDetails && <div className="mb-5" />}
+
         <div className="flex items-center gap-5 pt-4 border-t border-white/8 mb-5">
           {property.beds > 0 && (
             <div className="flex items-center gap-1.5">
@@ -303,31 +343,39 @@ function PropertyCard({
           </div>
         </div>
 
-        {/* Buttons */}
         <div className="flex gap-3 mt-auto">
-          <a
-            href={buildWhatsAppUrl(property)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 px-4 py-3 bg-[#25D366] hover:bg-[#1ebe5d] text-white transition-colors duration-300 shrink-0"
-            style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.58rem", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}
-          >
-            <MessageCircle size={13} />
-            WhatsApp
-          </a>
-
-          <button
-            onClick={onDetail}
-            className="flex-1 flex items-center justify-center gap-2 py-3 border border-[#C9A84C] text-[#C9A84C] hover:bg-[#C9A84C] hover:text-black transition-all duration-300"
-            style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase" }}
-          >
-            Ver Detalles
-            <ArrowRight size={12} />
-          </button>
+          {isUnavailable ? (
+            <div className="flex-1 flex items-center justify-center py-3 bg-white/5 border border-white/10">
+              <p className="text-white/30 tracking-widest uppercase"
+                style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.6rem" }}>
+                {statusLabel}
+              </p>
+            </div>
+          ) : (
+            <>
+              <a
+                href={buildWhatsAppUrl(property)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-[#25D366] hover:bg-[#1ebe5d] text-white transition-colors duration-300 shrink-0"
+                style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.58rem", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}
+              >
+                <MessageCircle size={13} />
+                WhatsApp
+              </a>
+              <button
+                onClick={onDetail}
+                className="flex-1 flex items-center justify-center gap-2 py-3 border border-[#C9A84C] text-[#C9A84C] hover:bg-[#C9A84C] hover:text-black transition-all duration-300"
+                style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase" }}
+              >
+                Ver Detalles
+                <ArrowRight size={12} />
+              </button>
+            </>
+          )}
         </div>
       </div>
 
-      {/* Gold bottom line */}
       <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-gradient-to-r from-[#C9A84C] to-[#F0D080] group-hover:w-full transition-all duration-500" />
     </div>
   );

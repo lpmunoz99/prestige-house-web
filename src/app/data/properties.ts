@@ -1,13 +1,24 @@
 export type ListingType = "venta" | "renta";
+export type PropertyStatus = "disponible" | "rentado" | "vendido";
 
 export interface Property {
-  id: number;
+  code: string;
+  status?: PropertyStatus;
   title: string;
   type: string;
   listingType: ListingType;
   address: string;
   zona: number;
+  location?: {
+    department: string;
+    municipality: string;
+    sector?: string;
+  };
   price: string;
+  priceDetails?: {
+    reserva?: string;
+    enganche?: string;
+  };
   beds: number;
   baths: number;
   area: number;
@@ -28,15 +39,14 @@ export const WHATSAPP_NUMBER = "50239144422";
 export function buildWhatsAppUrl(property: Property) {
   const action = property.listingType === "venta" ? "comprar" : "rentar";
   const text = encodeURIComponent(
-    `Hola, estoy interesado/a en *${action}* la propiedad *${property.title}*.\n📍 ${property.address}\n💰 ${property.price}\n¿Podría darme más información?`
+    `Hola, estoy interesado/a en *${action}* la propiedad *${property.title}* (Ref. ${property.code}).\n📍 ${property.address}\n💰 ${property.price}\n¿Podría darme más información?`
   );
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
 }
 
 export const properties: Property[] = [
-  // --- PROPIEDAD 1: APARTAMENTO 901 ---
   {
-    id: 1,
+    code: "AV-001",
     title: "Apartamento en Vista Hermosa I",
     type: "Apartamento",
     listingType: "venta",
@@ -65,9 +75,8 @@ export const properties: Property[] = [
       mp4: `${BASE_PATH}/apt-901/alvento_final.mp4`,
     },
   },
-  // --- PROPIEDAD 2: PENTHOUSE ---
   {
-    id: 2,
+    code: "AV-002",
     title: "Penthouse de Lujo para Estrenar",
     type: "Apartamento",
     listingType: "venta",
@@ -90,12 +99,39 @@ export const properties: Property[] = [
       `${BASE_PATH}/ph-zona15/ph-zona15_1.jpeg`, `${BASE_PATH}/ph-zona15/ph-zona15_2.jpeg`,
       `${BASE_PATH}/ph-zona15/ph-zona15_3.jpeg`, `${BASE_PATH}/ph-zona15/ph-zona15_4.jpeg`,
       `${BASE_PATH}/ph-zona15/ph-zona15_5.jpeg`, `${BASE_PATH}/ph-zona15/ph-zona15_6.jpeg`,
-      `${BASE_PATH}/ph-zona15/ph-zona15_7.jpeg`,
+      `${BASE_PATH}/ph-zona15/ph-zona15_7.jpeg`, `${BASE_PATH}/ph-zona15/ph-zona15_8.jpeg`,
     ],
   },
-  // --- PROPIEDAD 3: APARTAMENTO RENTA NIVEL 6 ---
+  // AV-003 reemplazado: mismo edificio que 602 pero apartamento 802
   {
-    id: 3,
+    code: "AV-003",
+    title: "Apartamento en Venta en Vista Hermosa 1, Apto. 802",
+    type: "Apartamento",
+    listingType: "venta",
+    address: "Zona 15, Guatemala City",
+    zona: 15,
+    price: "$ 395,405.87",
+    beds: 3,
+    baths: 3.5,
+    area: 172.74,
+    tag: "Promoción Especial",
+    description: "Excelente oportunidad de inversión. Apartamento en venta ubicado en 8vo nivel con acabados de lujo. El precio ya incluye impuestos.",
+    features: [
+      "Sala - Comedor", "Cocina cerrada", "Balcón con vistas",
+      "Baño de visitas", "Lavandería", "Cuarto de servicio completo",
+      "Habitación Master con walk-in closet", "2 Habitaciones secundarias con baño",
+      "2 Parqueos individuales", "Terraza y Churrasqueras", "Parque Infantil y Pet Friendly"
+    ],
+    images: [
+      `${BASE_PATH}/renta802-z15/renta802-z15_1.jpeg`, `${BASE_PATH}/renta802-z15/renta802-z15_2.jpeg`,
+      `${BASE_PATH}/renta802-z15/renta802-z15_3.jpeg`, `${BASE_PATH}/renta802-z15/renta802-z15_4.jpeg`,
+      `${BASE_PATH}/renta802-z15/renta802-z15_5.jpeg`, `${BASE_PATH}/renta802-z15/renta802-z15_6.jpeg`,
+      `${BASE_PATH}/renta802-z15/renta802-z15_7.jpeg`, `${BASE_PATH}/renta802-z15/renta802-z15_8.jpeg`,
+    ],
+  },
+  {
+    code: "AR-001",
+    status: "rentado",
     title: "Apartamento en renta Zona 15",
     type: "Apartamento",
     listingType: "renta",
@@ -114,42 +150,41 @@ export const properties: Property[] = [
       "2 Parqueos individuales", "Terraza y Churrasqueras", "Parque Infantil y Pet Friendly"
     ],
     images: [
-      `${BASE_PATH}/rentanv6-z15/rentanv6-z15_1.jpeg`, `${BASE_PATH}/rentanv6-z15/rentanv6-z15_2.jpeg`,
-      `${BASE_PATH}/rentanv6-z15/rentanv6-z15_3.jpeg`, `${BASE_PATH}/rentanv6-z15/rentanv6-z15_4.jpeg`,
-      `${BASE_PATH}/rentanv6-z15/rentanv6-z15_5.jpeg`, `${BASE_PATH}/rentanv6-z15/rentanv6-z15_6.jpeg`,
-      `${BASE_PATH}/rentanv6-z15/rentanv6-z15_7.jpeg`, `${BASE_PATH}/rentanv6-z15/rentanv6-z15_8.jpeg`,
+      `${BASE_PATH}/renta602-z15/renta602-z15_1.jpeg`, `${BASE_PATH}/renta602-z15/renta602-z15_2.jpeg`,
+      `${BASE_PATH}/renta602-z15/renta602-z15_3.jpeg`, `${BASE_PATH}/renta602-z15/renta602-z15_4.jpeg`,
+      `${BASE_PATH}/renta602-z15/renta602-z15_5.jpeg`, `${BASE_PATH}/renta602-z15/renta602-z15_6.jpeg`,
+      `${BASE_PATH}/renta602-z15/renta602-z15_7.jpeg`, `${BASE_PATH}/renta602-z15/renta602-z15_8.jpeg`,
     ],
   },
-  // --- PROPIEDAD 4: APARTAMENTO VENTA NIVEL 6 (PROMOCIÓN) ---
+  // Nueva: Apartamento 802 en renta
   {
-    id: 4,
-    title: "Promoción Especial: Apartamento en venta en 6to. Nivel",
+    code: "AR-004",
+    title: "Apartamento en Renta en Nivel alto en Vista Hermosa 1, Zona 15",
     type: "Apartamento",
-    listingType: "venta",
+    listingType: "renta",
     address: "Zona 15, Guatemala City",
     zona: 15,
-    price: "$ 388,847.87",
+    price: "$ 1,700 / mes",
     beds: 3,
     baths: 3.5,
     area: 172.74,
-    tag: "Promoción Especial",
-    description: "Excelente oportunidad de inversión. Apartamento en venta ubicado en 6to nivel con acabados de lujo. El precio ya incluye impuestos.",
+    tag: "Mantenimiento Incluido",
+    description: "Apartamento en renta ubicado en 8vo nivel. Ya incluye lámparas, cuota de mantenimiento e IVA.",
     features: [
-      "Sala - Comedor", "Cocina cerrada", "Balcón con vistas",
+      "Incluye Lámparas", "Sala - Comedor", "Cocina cerrada", "Balcón",
       "Baño de visitas", "Lavandería", "Cuarto de servicio completo",
       "Habitación Master con walk-in closet", "2 Habitaciones secundarias con baño",
       "2 Parqueos individuales", "Terraza y Churrasqueras", "Parque Infantil y Pet Friendly"
     ],
     images: [
-      `${BASE_PATH}/rentanv6-z15/rentanv6-z15_1.jpeg`, `${BASE_PATH}/rentanv6-z15/rentanv6-z15_2.jpeg`,
-      `${BASE_PATH}/rentanv6-z15/rentanv6-z15_3.jpeg`, `${BASE_PATH}/rentanv6-z15/rentanv6-z15_4.jpeg`,
-      `${BASE_PATH}/rentanv6-z15/rentanv6-z15_5.jpeg`, `${BASE_PATH}/rentanv6-z15/rentanv6-z15_6.jpeg`,
-      `${BASE_PATH}/rentanv6-z15/rentanv6-z15_7.jpeg`, `${BASE_PATH}/rentanv6-z15/rentanv6-z15_8.jpeg`,
+      `${BASE_PATH}/renta802-z15/renta802-z15_1.jpeg`, `${BASE_PATH}/renta802-z15/renta802-z15_2.jpeg`,
+      `${BASE_PATH}/renta802-z15/renta802-z15_3.jpeg`, `${BASE_PATH}/renta802-z15/renta802-z15_4.jpeg`,
+      `${BASE_PATH}/renta802-z15/renta802-z15_5.jpeg`, `${BASE_PATH}/renta802-z15/renta802-z15_6.jpeg`,
+      `${BASE_PATH}/renta802-z15/renta802-z15_7.jpeg`, `${BASE_PATH}/renta802-z15/renta802-z15_8.jpeg`,
     ],
   },
-  // --- PROPIEDAD 5: APARTAMENTO RENTA ZONA 5 #506 ---
   {
-    id: 5,
+    code: "AR-002",
     title: "Apartamento en Renta Zona 5 — Apto. 506",
     type: "Apartamento",
     listingType: "renta",
@@ -166,28 +201,20 @@ export const properties: Property[] = [
       "2 Habitaciones secundarias con baño compartido",
       "Sala", "Comedor", "Cocina",
       "Balcón con bellas vistas",
-      "Lavandería",
-      "2 Parqueos para vehículo",
-      "Parque con bellos jardines",
-      "Juego de ajedrez gigante",
-      "Canasta de Basketball",
-      "Social Area", "Social Kitchen",
+      "Lavandería", "2 Parqueos para vehículo",
+      "Parque con bellos jardines", "Juego de ajedrez gigante",
+      "Canasta de Basketball", "Social Area", "Social Kitchen",
       "Gimnasio", "Roof Top",
     ],
     images: [
-      `${BASE_PATH}/renta506-z5/renta506-z5_1.jpeg`,
-      `${BASE_PATH}/renta506-z5/renta506-z5_2.jpeg`,
-      `${BASE_PATH}/renta506-z5/renta506-z5_3.jpeg`,
-      `${BASE_PATH}/renta506-z5/renta506-z5_4.jpeg`,
-      `${BASE_PATH}/renta506-z5/renta506-z5_5.jpeg`,
-      `${BASE_PATH}/renta506-z5/renta506-z5_6.jpeg`,
-      `${BASE_PATH}/renta506-z5/renta506-z5_7.jpeg`,
-      `${BASE_PATH}/renta506-z5/renta506-z5_8.jpeg`,
+      `${BASE_PATH}/renta506-z5/renta506-z5_1.jpeg`, `${BASE_PATH}/renta506-z5/renta506-z5_2.jpeg`,
+      `${BASE_PATH}/renta506-z5/renta506-z5_3.jpeg`, `${BASE_PATH}/renta506-z5/renta506-z5_4.jpeg`,
+      `${BASE_PATH}/renta506-z5/renta506-z5_5.jpeg`, `${BASE_PATH}/renta506-z5/renta506-z5_6.jpeg`,
+      `${BASE_PATH}/renta506-z5/renta506-z5_7.jpeg`, `${BASE_PATH}/renta506-z5/renta506-z5_8.jpeg`,
     ],
   },
-  // --- PROPIEDAD 6: APARTAMENTO RENTA ZONA 2 #801 ---
   {
-    id: 6,
+    code: "AR-003",
     title: "Apartamento en Renta Zona 2 — Apto. 801",
     type: "Apartamento",
     listingType: "renta",
@@ -203,24 +230,86 @@ export const properties: Property[] = [
       "Habitación Master con baño completo",
       "2 Habitaciones secundarias con baño compartido",
       "Sala", "Comedor", "Cocina",
-      "Lavandería",
-      "2 Parqueos",
-      "Lobby",
-      "Kitchen Spot",
-      "Teen Lounge",
-      "Kids Club",
-      "Chill Bar",
-      "Social Area",
+      "Lavandería", "2 Parqueos",
+      "Lobby", "Kitchen Spot", "Teen Lounge",
+      "Kids Club", "Chill Bar", "Social Area",
     ],
     images: [
-      `${BASE_PATH}/renta801-z2/renta801-z2_1.jpeg`,
-      `${BASE_PATH}/renta801-z2/renta801-z2_2.jpeg`,
-      `${BASE_PATH}/renta801-z2/renta801-z2_3.jpeg`,
-      `${BASE_PATH}/renta801-z2/renta801-z2_4.jpeg`,
-      `${BASE_PATH}/renta801-z2/renta801-z2_5.jpeg`,
-      `${BASE_PATH}/renta801-z2/renta801-z2_6.jpeg`,
-      `${BASE_PATH}/renta801-z2/renta801-z2_7.jpeg`,
-      `${BASE_PATH}/renta801-z2/renta801-z2_8.jpeg`,
+      `${BASE_PATH}/renta801-z2/renta801-z2_1.jpeg`, `${BASE_PATH}/renta801-z2/renta801-z2_2.jpeg`,
+      `${BASE_PATH}/renta801-z2/renta801-z2_3.jpeg`, `${BASE_PATH}/renta801-z2/renta801-z2_4.jpeg`,
+      `${BASE_PATH}/renta801-z2/renta801-z2_5.jpeg`, `${BASE_PATH}/renta801-z2/renta801-z2_6.jpeg`,
+      `${BASE_PATH}/renta801-z2/renta801-z2_7.jpeg`, `${BASE_PATH}/renta801-z2/renta801-z2_8.jpeg`,
+    ],
+  },
+  // Nueva: Apartamento 307 en venta Zona 2
+  {
+    code: "AV-005",
+    title: "Magnífica oportunidad de inversión en Zona 2 — Apto. 307",
+    type: "Apartamento",
+    listingType: "venta",
+    address: "Ciudad Nueva, Zona 2, Guatemala City",
+    zona: 2,
+    price: "Q. 1,150,000.00",
+    beds: 3,
+    baths: 1,
+    area: 90.30,
+    tag: "Oportunidad de Inversión",
+    description: "Magnífica oportunidad de inversión en Zona 2. Apartamento en venta en Nivel 3, Apto. 307. Con 62.80m² habitables, 2.5m² de balcón y 25m² de 2 parqueos para un total de 90.30m².",
+    features: [
+      "3 Habitaciones", "Sala", "Comedor",
+      "Balcón", "Cocina",
+      "1 Baño completo", "Lavandería",
+      "2 Parqueos",
+      "Lobby", "Kitchen Spot", "Teen Lounge",
+      "Kids Club", "Chill Bar", "Social Area",
+    ],
+    images: [
+      `${BASE_PATH}/venta307-z2/venta307-z2_1.jpeg`, `${BASE_PATH}/venta307-z2/venta307-z2_2.jpeg`,
+      `${BASE_PATH}/venta307-z2/venta307-z2_3.jpeg`, `${BASE_PATH}/venta307-z2/venta307-z2_4.jpeg`,
+      `${BASE_PATH}/venta307-z2/venta307-z2_5.jpeg`, `${BASE_PATH}/venta307-z2/venta307-z2_6.jpeg`,
+      `${BASE_PATH}/venta307-z2/venta307-z2_7.jpeg`, `${BASE_PATH}/venta307-z2/venta307-z2_8.jpeg`,
+    ],
+  },
+  {
+    code: "AV-004",
+    title: "Tu Apartamento frente al Mar",
+    type: "Apartamento",
+    listingType: "venta",
+    address: "Chulamar, Puerto de San José, Escuintla",
+    zona: 0,
+    location: {
+      department: "Escuintla",
+      municipality: "San José",
+      sector: "Chulamar",
+    },
+    price: "Q. 1,804,372.00",
+    priceDetails: {
+      reserva: "Q. 27,100.00",
+      enganche: "20%",
+    },
+    beds: 2,
+    baths: 2,
+    area: 111.25,
+    tag: "Frente al Mar",
+    description: "Un desarrollo exclusivo frente al mar, diseñado para el descanso, la inversión y la vida en comunidad, con acceso directo a la playa mediante un puente privado. Apartamento de 83.25m² habitables + 28.99m² de 2 parqueos tándem.",
+    features: [
+      "Sala", "Comedor con acceso a balcón con vistas al mar",
+      "Cocina con top de cuarzo y gabinetes",
+      "2 Habitaciones", "2 Baños completos",
+      "2 Parqueos Tándem",
+      "Sky Lounge con vista al océano",
+      "Piscina tipo laguna",
+      "Club de playa con Tiki Bar y fire pits",
+      "Muelle para pesca y dock para kayaks y paddleboards",
+      "Canchas deportivas (fútbol, tenis, pickleball)",
+      "Área de juegos para niños y mascotas",
+      "Jacuzzi",
+    ],
+    images: [
+      `${BASE_PATH}/apt-chulamar/apt-chulamar_1.jpeg`, `${BASE_PATH}/apt-chulamar/apt-chulamar_2.jpeg`,
+      `${BASE_PATH}/apt-chulamar/apt-chulamar_3.jpeg`, `${BASE_PATH}/apt-chulamar/apt-chulamar_4.jpeg`,
+      `${BASE_PATH}/apt-chulamar/apt-chulamar_5.jpeg`, `${BASE_PATH}/apt-chulamar/apt-chulamar_6.jpeg`,
+      `${BASE_PATH}/apt-chulamar/apt-chulamar_7.jpeg`, `${BASE_PATH}/apt-chulamar/apt-chulamar_8.jpeg`,
     ],
   },
 ];
