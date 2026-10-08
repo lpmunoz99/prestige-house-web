@@ -48,69 +48,71 @@ PRESTIGE HOUSE/
 
 **Regla de oro:** el 99% de los cambios se hacen únicamente en `src/app/data/properties.ts`.
 
+> Cada propiedad tiene una lista de ofertas (`offers`) en vez de un solo tipo de listado: ver sección 2.
+
 ---
 
 ## 2. Cómo agregar una propiedad {#agregar-propiedad}
 
-Abre `src/app/data/properties.ts` y agrega un nuevo objeto al array `properties`.
+Abre `src/app/data/properties.ts` y agrega un nuevo objeto al final del array `properties`.
 
-### Plantilla base (propiedad en Guatemala City)
+Cada propiedad es **una sola tarjeta** y puede tener una o varias **ofertas** (`offers`): venta, renta o ambas. Si el cliente la ofrece en venta y en renta, es UNA propiedad con 2 ofertas (no se duplica).
+
+### Plantilla base
 
 ```ts
 {
-  code: "AV-005",                          // Código único — ver sistema de códigos abajo
+  code: "AP-006",                          // Código único — ver sistema de códigos abajo
   title: "Nombre de la propiedad",
-  type: "Apartamento",                     // "Apartamento" | "Casa" | "Local"
-  listingType: "venta",                    // "venta" | "renta"
+  type: "Apartamento",                     // "Apartamento" | "Casa" | "Local" | "Oficina"
+  offers: [
+    { type: "venta", price: "$ 250,000", furnished: false },        // furnished: false = sin muebles
+    { type: "renta", price: "$ 1,500 + IVA / mes", furnished: true }, // true = amueblado
+  ],
   address: "Zona 10, Guatemala City",
   zona: 10,                                // Número de zona (para el filtro)
-  price: "$ 250,000.00",
   beds: 3,
-  baths: 2,
-  area: 120.00,                            // Metros cuadrados totales
-  tag: "Nuevo",                            // Etiqueta opcional (ej: "Promoción", "Para Estrenar")
+  baths: 2.5,                              // 2.5 = 2 baños completos + 1 de visitas
+  area: 120.00,                            // m² totales
+  tag: "Nuevo",                            // Etiqueta opcional
   description: "Descripción de la propiedad...",
   features: [
-    "Sala - Comedor",
-    "Cocina equipada",
-    "2 Parqueos",
-    // ...más características
+    "Sala", "Comedor", "Cocina equipada", "2 Parqueos",
+    // ...más características y amenidades
   ],
-  images: [
-    `/properties-img/nombre-carpeta/nombre-carpeta_1.jpeg`,
-    `/properties-img/nombre-carpeta/nombre-carpeta_2.jpeg`,
-    `/properties-img/nombre-carpeta/nombre-carpeta_3.jpeg`,
-    `/properties-img/nombre-carpeta/nombre-carpeta_4.jpeg`,
-    `/properties-img/nombre-carpeta/nombre-carpeta_5.jpeg`,
-    `/properties-img/nombre-carpeta/nombre-carpeta_6.jpeg`,
-    `/properties-img/nombre-carpeta/nombre-carpeta_7.jpeg`,
-    `/properties-img/nombre-carpeta/nombre-carpeta_8.jpeg`,
-  ],
+  images: gallery("carpeta-propiedad"),    // genera carpeta-propiedad_1.webp ... _8.webp
 },
 ```
 
-### Plantilla con precio especial (reserva y enganche)
+- **Solo venta o solo renta:** deja una sola oferta dentro de `offers`.
+- **`furnished`:** es opcional. Úsalo cuando el cliente especifique si es con o sin muebles. Si no aplica (ej. oficina), omítelo.
+- **`gallery("carpeta")`:** genera las rutas de 8 imágenes. Si la propiedad tiene otra cantidad: `gallery("carpeta", 6)`.
+
+### Oferta con reserva y enganche
 
 ```ts
-{
-  code: "AV-005",
-  // ...campos normales...
+offers: [{
+  type: "venta",
   price: "Q. 1,500,000.00",
-  priceDetails: {
-    reserva: "Q. 25,000.00",
-    enganche: "20%",
-  },
-  // ...resto de campos...
-},
+  priceDetails: { reserva: "Q. 25,000.00", enganche: "20%" },
+}],
 ```
 
-### Plantilla con video
+### Proyecto en planos / precio "desde"
+
+Escribe el "desde" directamente en el precio, y usa texto en `beds` si hay varias tipologías. `baths` y `area` son opcionales: si se omiten, no se muestran.
+
+```ts
+offers: [{ type: "venta", price: "Desde $ 190,000" }],
+beds: "1, 2 y 3",
+```
+
+### Con video
 
 ```ts
 {
-  code: "AV-005",
   // ...campos normales...
-  images: [ /* 8 imágenes */ ],
+  images: gallery("nombre-carpeta"),
   video: {
     webm: `/properties-img/nombre-carpeta/video.webm`,
     mp4: `/properties-img/nombre-carpeta/video.mp4`,
@@ -120,44 +122,44 @@ Abre `src/app/data/properties.ts` y agrega un nuevo objeto al array `properties`
 
 > Al pasar el mouse sobre la card, el video se reproduce automáticamente. En la página de detalle aparece como primera miniatura con ícono de play.
 
+### Qué hace el sitio con propiedades de 2 ofertas
+
+- Aparece en **ambas pestañas** (En Venta y En Renta), mostrando el precio de esa pestaña.
+- La card indica "También en renta / venta".
+- En el detalle hay un selector Venta / Renta; el botón de WhatsApp usa la oferta seleccionada ("comprar" o "rentar", con su precio).
+- El enlace desde una card abre el detalle ya en la oferta de esa pestaña: `/propiedad/AP-001?oferta=renta`.
+
 ---
 
 ## 3. Cómo marcar una propiedad como vendida o rentada {#cambiar-status}
 
-Abre `src/app/data/properties.ts`, encuentra la propiedad por su `code` y agrega **una sola línea**:
+El `status` va **dentro de la oferta**, porque una propiedad puede estar rentada pero seguir en venta.
 
 ### Marcar como rentada
 
 ```ts
-{
-  code: "AR-001",
-  status: "rentado",    // ← agregar esta línea
-  title: "Apartamento en renta Zona 15",
-  // ...resto sin cambios
-},
+offers: [
+  { type: "venta", price: "$ 650,000" },
+  { type: "renta", price: "$ 2,500 / mes", status: "rentado" },   // ← agregar esta línea
+],
 ```
 
 ### Marcar como vendida
 
 ```ts
-{
-  code: "AV-001",
-  status: "vendido",    // ← agregar esta línea
-  title: "Apartamento en Vista Hermosa I",
-  // ...resto sin cambios
-},
+offers: [{ type: "venta", price: "$ 401,262.16", status: "vendido" }],
 ```
 
 ### Volver a disponible
 
-Simplemente elimina la línea `status` o cámbiala a `"disponible"`.
+Elimina la línea `status` o cámbiala a `"disponible"`.
 
-### ¿Qué cambia visualmente?
+### ¿Qué cambia visualmente? (solo en la oferta afectada)
 
 | Elemento | Disponible | Rentado / Vendido |
 |----------|-----------|-------------------|
 | Imagen en card | Color normal | Escala de grises |
-| Sello | Ninguno | "Ya Rentado" / "Ya Vendido" rotado sobre la imagen |
+| Sello | Ninguno | "Rentado" / "Vendido" rotado sobre la imagen |
 | Precio | Dorado | Tachado |
 | Botones | WhatsApp + Ver Detalles | Mensaje de estado |
 | Página de detalle | Botones de contacto | Mensaje + WhatsApp para consultas similares |
@@ -166,26 +168,35 @@ Simplemente elimina la línea `status` o cámbiala a `"disponible"`.
 
 ## 4. Referencia completa de campos {#referencia-campos}
 
+### Propiedad
+
 | Campo | Tipo | Requerido | Descripción |
 |-------|------|-----------|-------------|
 | `code` | `string` | ✅ | Identificador único. Se usa en la URL y en el mensaje de WhatsApp |
-| `status` | `"disponible" \| "rentado" \| "vendido"` | ❌ | Si se omite, se asume disponible |
 | `title` | `string` | ✅ | Nombre de la propiedad |
-| `type` | `string` | ✅ | `"Apartamento"`, `"Casa"` o `"Local"` |
-| `listingType` | `"venta" \| "renta"` | ✅ | Define en qué tab aparece |
+| `type` | `string` | ✅ | `"Apartamento"`, `"Casa"`, `"Local"` u `"Oficina"`. Los botones de filtro se generan solos |
+| `offers` | `Offer[]` | ✅ | Una o varias ofertas (ver abajo) |
 | `address` | `string` | ✅ | Dirección completa |
 | `zona` | `number` | ✅ | Número de zona. Usar `0` para propiedades fuera de la capital |
 | `location` | `objeto` | ❌ | Solo para propiedades fuera de Guatemala City |
-| `price` | `string` | ✅ | Texto libre: `"$ 250,000"`, `"Q. 5,300 / mes"`, etc. |
-| `priceDetails` | `objeto` | ❌ | Para mostrar reserva y/o enganche debajo del precio |
-| `beds` | `number` | ✅ | Habitaciones. Usar `0` si no aplica (ej: locales) |
-| `baths` | `number` | ✅ | Baños. Acepta decimales: `2.5` = 2 baños + 1 medio baño |
-| `area` | `number` | ✅ | Metros cuadrados totales |
-| `images` | `string[]` | ✅ | Rutas de las 8 imágenes |
+| `beds` | `number \| string` | ❌ | Habitaciones. Omitir o `0` si no aplica (oficinas, locales). Texto para proyectos: `"1, 2 y 3"` |
+| `baths` | `number \| string` | ❌ | Baños. Acepta decimales: `2.5` = 2 completos + 1 medio/visitas |
+| `area` | `number` | ❌ | Metros cuadrados. Si se omite, no se muestra |
+| `images` | `string[]` | ✅ | Usar `gallery("carpeta")` |
 | `video` | `objeto` | ❌ | Objeto con rutas `.webm` y `.mp4` |
-| `tag` | `string` | ❌ | Etiqueta dorada visible en la card: `"Promoción Especial"`, `"Para Estrenar"`, `"Frente al Mar"`, etc. |
+| `tag` | `string` | ❌ | Etiqueta dorada visible en la card: `"Promoción Especial"`, `"Para Estrenar"`, `"En Planos"`, etc. |
 | `description` | `string` | ✅ | Descripción larga de la propiedad |
 | `features` | `string[]` | ✅ | Lista de características (sala, cocina, parqueos, amenidades, etc.) |
+
+### Oferta (`offers[]`)
+
+| Campo | Tipo | Requerido | Descripción |
+|-------|------|-----------|-------------|
+| `type` | `"venta" \| "renta"` | ✅ | Define en qué pestaña aparece |
+| `price` | `string` | ✅ | Texto libre: `"$ 250,000"`, `"$ 2,500 + IVA / mes"`, `"Desde $ 190,000"` |
+| `furnished` | `boolean` | ❌ | `true` = Amueblado, `false` = Sin muebles. Omitido = no se muestra |
+| `status` | `"disponible" \| "rentado" \| "vendido"` | ❌ | Si se omite, se asume disponible |
+| `priceDetails` | `objeto` | ❌ | Reserva y/o enganche debajo del precio |
 
 ---
 
@@ -199,31 +210,25 @@ El `code` es el identificador único de cada propiedad. Se muestra en las cards,
 [PREFIJO]-[NÚMERO CORRELATIVO DE 3 DÍGITOS]
 ```
 
-### Prefijos por tipo
+### Prefijos
+
+El prefijo identifica el **tipo de inmueble**, no si está en venta o renta (una misma propiedad puede estar en ambas).
 
 | Prefijo | Significado |
 |---------|-------------|
-| `AV` | Apartamento en Venta |
-| `AR` | Apartamento en Renta |
-| `CV` | Casa en Venta |
-| `CR` | Casa en Renta |
-| `LV` | Local en Venta |
-| `LR` | Local en Renta |
+| `AP` | Apartamento (venta, renta o ambas) |
+| `CA` | Casa |
+| `LO` | Local |
+| `OF` | Oficina |
 
-### Ejemplos
-
-```
-AV-001, AV-002, AV-003...   → Apartamentos en venta
-AR-001, AR-002, AR-003...   → Apartamentos en renta
-CV-001...                   → Casas en venta
-```
+**Códigos históricos:** las propiedades anteriores conservan su código para no romper enlaces ya compartidos: `AV-001…005` (apartamentos en venta) y `AR-001…004` (apartamentos en renta). Para propiedades nuevas se usa siempre el esquema de la tabla.
 
 ### URLs generadas
 
 ```
+/propiedad/AP-001                 → abre en la primera oferta
+/propiedad/AP-001?oferta=renta    → abre directamente en renta
 /propiedad/AV-001
-/propiedad/AR-002
-/propiedad/CV-001
 ```
 
 > ⚠️ El `code` debe ser **único**. Si dos propiedades tienen el mismo código, solo una se mostrará correctamente.
@@ -238,7 +243,7 @@ Para propiedades en otros departamentos (Escuintla, Antigua, etc.), usar `zona: 
 {
   code: "AV-004",
   title: "Tu Apartamento frente al Mar",
-  listingType: "venta",
+  offers: [{ type: "venta", price: "Q. 1,804,372.00" }],
   address: "Chulamar, Puerto de San José, Escuintla",
   zona: 0,                                 // ← 0 indica que está fuera de la capital
   location: {
@@ -268,40 +273,47 @@ Cada propiedad tiene su propia carpeta dentro de `public/properties-img/`:
 public/
   properties-img/
     apt-901/
-      apt-901_1.jpeg
-      apt-901_2.jpeg
-      apt-901_3.jpeg
-      apt-901_4.jpeg
-      apt-901_5.jpeg
-      apt-901_6.jpeg
-      apt-901_7.jpeg
-      apt-901_8.jpeg
+      apt-901_1.webp
+      apt-901_2.webp
+      apt-901_3.webp
+      apt-901_4.webp
+      apt-901_5.webp
+      apt-901_6.webp
+      apt-901_7.webp
+      apt-901_8.webp
       alvento_final.webm    ← video (opcional)
       alvento_final.mp4     ← video (opcional)
     renta602-z15/
-      renta602-z15_1.jpeg
+      renta602-z15_1.webp
       ...
-      renta602-z15_8.jpeg
+      renta602-z15_8.webp
 ```
 
 ### Convención de nombres de archivos
 
 ```
-[nombre-carpeta]_[número].jpeg
+[nombre-carpeta]_[número].webp
 ```
 
-Todas las propiedades deben tener exactamente **8 imágenes** (`_1` al `_8`).
+Cada propiedad lleva normalmente **8 imágenes** (`_1` al `_8`). `gallery("carpeta")` asume 8; si hay otra cantidad, `gallery("carpeta", 6)`. Si falta una imagen, el sitio muestra el logo en su lugar.
 
 ### Convención de nombre de carpeta
 
 ```
 Ejemplos:
-  apt-901        → apartamento 901
-  ph-zona15      → penthouse zona 15
-  renta602-z15   → apartamento en renta 602, zona 15
-  renta506-z5    → apartamento en renta 506, zona 5
-  apt-chulamar   → apartamento en Chulamar
+  apt-901             → apartamento 901
+  ph-zona15           → penthouse zona 15
+  renta602-z15        → apartamento 602, zona 15
+  ap-z14-6to          → apartamento en zona 14, 6to nivel
+  ap-z10-corporativa  → apartamento en zona corporativa, zona 10
+  of-z10-7mo          → oficina en zona 10, 7mo nivel
 ```
+
+### Optimización de imágenes (ahorra espacio)
+
+- Exportar a **1280 px de lado largo** y calidad ~80. Cada imagen debe pesar menos de ~150 KB.
+- Guardar las **fotos originales fuera del proyecto** (Drive de la empresa o disco externo). En el repo solo van las versiones optimizadas.
+- **Todas las imágenes del sitio van en formato `.webp`** (calidad ~78, máx. 1280 px). Pesan ~40% menos que un JPEG equivalente. Si llegan fotos `.jpg`/`.jpeg`, convertirlas antes de subirlas (con Pillow: `im.thumbnail((1280,1280)); im.save(out, "WEBP", quality=78, method=6)`).
 
 ### Videos
 
@@ -353,7 +365,7 @@ Hola, estoy interesado/a en *comprar* la propiedad *Apartamento en Vista Hermosa
 ¿Podría darme más información?
 ```
 
-El texto cambia entre "comprar" y "rentar" según el `listingType` de la propiedad. El número de WhatsApp se configura en `properties.ts` en la constante `WHATSAPP_NUMBER`.
+El texto cambia entre "comprar" y "rentar" según la oferta (`offers[].type`) que se esté viendo, e incluye "(Amueblado)" o "(Sin muebles)" si la oferta tiene `furnished`. El número de WhatsApp se configura en `properties.ts` en la constante `WHATSAPP_NUMBER`.
 
 ---
 
@@ -361,22 +373,23 @@ El texto cambia entre "comprar" y "rentar" según el `listingType` de la propied
 
 ### ✅ Agregar una propiedad nueva
 1. Crear carpeta en `public/properties-img/nombre-carpeta/`
-2. Subir las 8 imágenes con el formato `nombre-carpeta_1.jpeg` ... `_8.jpeg`
+2. Subir las 8 imágenes optimizadas con el formato `nombre-carpeta_1.webp` ... `_8.webp`
 3. Abrir `src/app/data/properties.ts`
-4. Copiar el bloque de una propiedad existente y pegarlo al final del array `properties`
-5. Editar todos los campos: `code`, `title`, `address`, `zona`, `price`, `beds`, `baths`, `area`, `description`, `features`, `images`
-6. Guardar — la propiedad aparece automáticamente en el filtro y en el grid
+4. Copiar el bloque de una propiedad existente (ej. `AP-001`) y pegarlo al final del array `properties`
+5. Editar `code`, `title`, `type`, `offers` (una por cada precio que dé el cliente), `address`, `zona`, `beds`, `baths`, `area`, `description`, `features` y `gallery("nombre-carpeta")`
+6. Guardar — la propiedad aparece automáticamente en la(s) pestaña(s) y en el filtro de zonas
+7. Regenerar el sitemap: `node scripts/generate-sitemap.mjs` (lee los códigos de `properties.ts` y reescribe `public/sitemap.xml`)
 
 ### ✅ Marcar como rentada o vendida
 1. Abrir `src/app/data/properties.ts`
 2. Buscar la propiedad por su `code` (Ctrl+F)
-3. Agregar `status: "rentado"` o `status: "vendido"` en la segunda línea del objeto
+3. Agregar `status: "rentado"` o `status: "vendido"` dentro de la oferta correspondiente en `offers`
 4. Guardar
 
 ### ✅ Cambiar el precio
 1. Abrir `src/app/data/properties.ts`
 2. Buscar la propiedad por su `code` (Ctrl+F)
-3. Editar el campo `price`
+3. Editar el campo `price` de la oferta (venta o renta)
 4. Guardar
 
 ### ✅ Cambiar imágenes

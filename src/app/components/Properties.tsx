@@ -1,6 +1,9 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router";
-import { properties, buildWhatsAppUrl, type ListingType, type Property } from "../data/properties";
+import {
+  properties, buildWhatsAppUrl, getOffer, isOfferUnavailable, furnishedLabel, hasValue,
+  type ListingType, type Property, type Offer,
+} from "../data/properties";
 import { Bed, Bath, Maximize2, MapPin, ChevronDown, MessageCircle, ArrowRight, Play } from "lucide-react";
 
 function getLocationLabel(property: Property): string {
@@ -11,7 +14,7 @@ function getLocationLabel(property: Property): string {
   return `Zona ${property.zona}`;
 }
 
-function getStatusLabel(status: string) {
+function getStatusLabel(status?: string) {
   if (status === "rentado") return "Rentado";
   if (status === "vendido") return "Vendido";
   return null;
@@ -24,15 +27,21 @@ export function Properties() {
   const [zonaDropdownOpen, setZonaDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
-  const types = ["Todos", "Casa", "Apartamento"];
+  const tabProperties = useMemo(
+    () => properties.filter(p => getOffer(p, activeTab)),
+    [activeTab]
+  );
+
+  const types = useMemo(
+    () => ["Todos", ...new Set(tabProperties.map(p => p.type))],
+    [tabProperties]
+  );
 
   const zonas = useMemo(() => {
     return [...new Set(
-      properties
-        .filter(p => p.listingType === activeTab && p.zona > 0)
-        .map(p => p.zona)
+      tabProperties.filter(p => p.zona > 0).map(p => p.zona)
     )].sort((a, b) => a - b);
-  }, [activeTab]);
+  }, [tabProperties]);
 
   const handleTabChange = (tab: ListingType) => {
     setActiveTab(tab);
@@ -42,13 +51,12 @@ export function Properties() {
   };
 
   const filtered = useMemo(() => {
-    return properties.filter(p => {
-      const listingMatch = p.listingType === activeTab;
+    return tabProperties.filter(p => {
       const zonaMatch = selectedZona === null || p.zona === selectedZona;
       const typeMatch = selectedType === "Todos" || p.type === selectedType;
-      return listingMatch && zonaMatch && typeMatch;
+      return zonaMatch && typeMatch;
     });
-  }, [activeTab, selectedZona, selectedType]);
+  }, [tabProperties, selectedZona, selectedType]);
 
   return (
     <section id="propiedades" className="bg-[#0a0a0a] py-24 px-6">
@@ -178,7 +186,8 @@ export function Properties() {
               <PropertyCard
                 key={property.code}
                 property={property}
-                onDetail={() => navigate(`/propiedad/${property.code}`)}
+                offer={getOffer(property, activeTab)!}
+                onDetail={() => navigate(`/propiedad/${property.code}?oferta=${activeTab}`)}
               />
             ))}
           </div>
@@ -190,15 +199,19 @@ export function Properties() {
 
 function PropertyCard({
   property,
+  offer,
   onDetail,
 }: {
   property: Property;
+  offer: Offer;
   onDetail: () => void;
 }) {
-  const isRenta = property.listingType === "renta";
+  const isRenta = offer.type === "renta";
   const [isHovered, setIsHovered] = useState(false);
-  const isUnavailable = property.status === "rentado" || property.status === "vendido";
-  const statusLabel = property.status ? getStatusLabel(property.status) : null;
+  const isUnavailable = isOfferUnavailable(offer);
+  const statusLabel = getStatusLabel(offer.status);
+  const furnished = furnishedLabel(offer);
+  const otherOffer = property.offers.find(o => o.type !== offer.type);
 
   return (
     <div
@@ -224,6 +237,7 @@ function PropertyCard({
             src={property.images[0]}
             alt={property.title}
             className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${isUnavailable ? "grayscale opacity-60" : ""}`}
+            onError={e => { e.currentTarget.src = "/logo.png"; e.currentTarget.classList.add("object-contain", "p-12", "bg-black"); }}
           />
         )}
 
@@ -300,28 +314,40 @@ function PropertyCard({
 
         <p className={`mb-1 ${isUnavailable ? "text-white/30 line-through" : "text-[#C9A84C]"}`}
           style={{ fontFamily: "Playfair Display, serif", fontSize: "1.3rem", fontWeight: 600 }}>
-          {property.price}
+          {offer.price}
         </p>
 
-        {property.priceDetails && !isUnavailable && (
+        {(furnished || otherOffer) && (
+          <p className="text-white/40 mb-4" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.58rem" }}>
+            {furnished}
+            {furnished && otherOffer && " · "}
+            {otherOffer && (
+              <span className="text-[#C9A84C]/70">
+                También en {otherOffer.type === "venta" ? "venta" : "renta"}
+              </span>
+            )}
+          </p>
+        )}
+
+        {offer.priceDetails && !isUnavailable && (
           <div className="flex gap-4 mb-4">
-            {property.priceDetails.reserva && (
+            {offer.priceDetails.reserva && (
               <p className="text-white/30" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.58rem" }}>
-                Reserva: <span className="text-white/50">{property.priceDetails.reserva}</span>
+                Reserva: <span className="text-white/50">{offer.priceDetails.reserva}</span>
               </p>
             )}
-            {property.priceDetails.enganche && (
+            {offer.priceDetails.enganche && (
               <p className="text-white/30" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.58rem" }}>
-                Enganche: <span className="text-white/50">{property.priceDetails.enganche}</span>
+                Enganche: <span className="text-white/50">{offer.priceDetails.enganche}</span>
               </p>
             )}
           </div>
         )}
 
-        {!property.priceDetails && <div className="mb-5" />}
+        {!furnished && !otherOffer && !offer.priceDetails && <div className="mb-5" />}
 
         <div className="flex items-center gap-5 pt-4 border-t border-white/8 mb-5">
-          {property.beds > 0 && (
+          {hasValue(property.beds) && (
             <div className="flex items-center gap-1.5">
               <Bed size={13} className="text-[#C9A84C]" />
               <p className="text-white/60" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem" }}>
@@ -329,18 +355,22 @@ function PropertyCard({
               </p>
             </div>
           )}
-          <div className="flex items-center gap-1.5">
-            <Bath size={13} className="text-[#C9A84C]" />
-            <p className="text-white/60" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem" }}>
-              {property.baths} baños
-            </p>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Maximize2 size={13} className="text-[#C9A84C]" />
-            <p className="text-white/60" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem" }}>
-              {property.area} m²
-            </p>
-          </div>
+          {hasValue(property.baths) && (
+            <div className="flex items-center gap-1.5">
+              <Bath size={13} className="text-[#C9A84C]" />
+              <p className="text-white/60" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem" }}>
+                {property.baths} baños
+              </p>
+            </div>
+          )}
+          {hasValue(property.area) && (
+            <div className="flex items-center gap-1.5">
+              <Maximize2 size={13} className="text-[#C9A84C]" />
+              <p className="text-white/60" style={{ fontFamily: "Montserrat, sans-serif", fontSize: "0.65rem" }}>
+                {property.area} m²
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="flex gap-3 mt-auto">
@@ -354,7 +384,7 @@ function PropertyCard({
           ) : (
             <>
               <a
-                href={buildWhatsAppUrl(property)}
+                href={buildWhatsAppUrl(property, offer)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 px-4 py-3 bg-[#25D366] hover:bg-[#1ebe5d] text-white transition-colors duration-300 shrink-0"

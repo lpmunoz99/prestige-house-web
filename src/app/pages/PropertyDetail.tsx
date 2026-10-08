@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate, useSearchParams } from "react-router";
 import {
   ArrowLeft, Bed, Bath, Maximize2, MapPin, MessageCircle,
   ChevronLeft, ChevronRight, Check, Phone, Home, Play
 } from "lucide-react";
-import { properties, buildWhatsAppUrl } from "../data/properties";
+import {
+  properties, buildWhatsAppUrl, isOfferUnavailable, furnishedLabel, hasValue,
+  type ListingType,
+} from "../data/properties";
 
 type MediaItem =
   | { type: "image"; url: string }
@@ -45,6 +48,7 @@ function Carousel({ media, title }: { media: MediaItem[]; title: string }) {
             src={media[current].url}
             alt={`${title} - archivo ${current + 1}`}
             className="w-full h-full object-cover transition-all duration-500"
+            onError={e => { e.currentTarget.src = "/logo.png"; e.currentTarget.classList.add("object-contain", "p-24"); }}
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
@@ -108,7 +112,12 @@ function Carousel({ media, title }: { media: MediaItem[]; title: string }) {
 export function PropertyDetail() {
   const { code } = useParams<{ code: string }>();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const property = properties.find(p => p.code === code);
+  const requested = searchParams.get("oferta");
+  const offer = property
+    ? property.offers.find(o => o.type === requested) ?? property.offers[0]
+    : undefined;
 
   const allMedia: MediaItem[] = property ? [
     ...(property.video ? [{ type: "video" as const, ...property.video, poster: property.images[0] }] : []),
@@ -119,7 +128,7 @@ export function PropertyDetail() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [code]);
 
-  if (!property) {
+  if (!property || !offer) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center gap-6">
         <p className="text-white/50" style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.3rem" }}>
@@ -136,9 +145,11 @@ export function PropertyDetail() {
     );
   }
 
-  const isRenta = property.listingType === "renta";
-  const isUnavailable = property.status === "rentado" || property.status === "vendido";
-  const statusLabel = property.status === "rentado" ? "Rentado" : property.status === "vendido" ? "Vendido" : null;
+  const isRenta = offer.type === "renta";
+  const isUnavailable = isOfferUnavailable(offer);
+  const statusLabel = offer.status === "rentado" ? "Rentado" : offer.status === "vendido" ? "Vendido" : null;
+  const furnished = furnishedLabel(offer);
+  const selectOffer = (type: ListingType) => setSearchParams({ oferta: type }, { replace: true });
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]" style={{ fontFamily: "Montserrat, sans-serif" }}>
@@ -239,26 +250,43 @@ export function PropertyDetail() {
               </p>
             </div>
 
+            {property.offers.length > 1 && (
+              <div className="flex border border-white/10 mb-3">
+                {property.offers.map(o => (
+                  <button
+                    key={o.type}
+                    onClick={() => selectOffer(o.type)}
+                    className={`flex-1 py-2.5 tracking-widest uppercase transition-all duration-300 ${
+                      o.type === offer.type ? "bg-[#C9A84C] text-black" : "text-white/50 hover:text-[#C9A84C] hover:bg-white/5"
+                    }`}
+                    style={{ fontSize: "0.62rem", fontWeight: 600 }}
+                  >
+                    {o.type === "venta" ? "En Venta" : "En Renta"}
+                  </button>
+                ))}
+              </div>
+            )}
+
             <div className="bg-[#111111] border border-[#C9A84C]/20 px-5 py-4 mb-6">
               <p className="text-white/40 mb-1" style={{ fontSize: "0.58rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
-                {isRenta ? "Precio de renta" : "Precio de venta"}
+                {isRenta ? "Precio de renta" : "Precio de venta"}{furnished && ` · ${furnished}`}
               </p>
               <p
                 className={isUnavailable ? "text-white/25 line-through" : "text-[#C9A84C]"}
                 style={{ fontFamily: "Playfair Display, serif", fontSize: "clamp(1.5rem, 3vw, 2rem)", fontWeight: 600 }}
               >
-                {property.price}
+                {offer.price}
               </p>
-              {property.priceDetails && !isUnavailable && (
+              {offer.priceDetails && !isUnavailable && (
                 <div className="flex gap-4 mt-2 pt-2 border-t border-white/8">
-                  {property.priceDetails.reserva && (
+                  {offer.priceDetails.reserva && (
                     <p className="text-white/30" style={{ fontSize: "0.58rem" }}>
-                      Reserva: <span className="text-white/50">{property.priceDetails.reserva}</span>
+                      Reserva: <span className="text-white/50">{offer.priceDetails.reserva}</span>
                     </p>
                   )}
-                  {property.priceDetails.enganche && (
+                  {offer.priceDetails.enganche && (
                     <p className="text-white/30" style={{ fontSize: "0.58rem" }}>
-                      Enganche: <span className="text-white/50">{property.priceDetails.enganche}</span>
+                      Enganche: <span className="text-white/50">{offer.priceDetails.enganche}</span>
                     </p>
                   )}
                 </div>
@@ -266,23 +294,27 @@ export function PropertyDetail() {
             </div>
 
             <div className="grid grid-cols-3 gap-3 mb-6">
-              {property.beds > 0 && (
+              {hasValue(property.beds) && (
                 <div className="bg-[#111111] border border-white/8 p-3 text-center">
                   <Bed size={16} className="text-[#C9A84C] mx-auto mb-1" />
                   <p className="text-white" style={{ fontFamily: "Playfair Display, serif", fontSize: "1.1rem" }}>{property.beds}</p>
                   <p className="text-white/40" style={{ fontSize: "0.55rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>Habitaciones</p>
                 </div>
               )}
-              <div className="bg-[#111111] border border-white/8 p-3 text-center">
-                <Bath size={16} className="text-[#C9A84C] mx-auto mb-1" />
-                <p className="text-white" style={{ fontFamily: "Playfair Display, serif", fontSize: "1.1rem" }}>{property.baths}</p>
-                <p className="text-white/40" style={{ fontSize: "0.55rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>Baños</p>
-              </div>
-              <div className="bg-[#111111] border border-white/8 p-3 text-center">
-                <Maximize2 size={16} className="text-[#C9A84C] mx-auto mb-1" />
-                <p className="text-white" style={{ fontFamily: "Playfair Display, serif", fontSize: "1.1rem" }}>{property.area}</p>
-                <p className="text-white/40" style={{ fontSize: "0.55rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>m²</p>
-              </div>
+              {hasValue(property.baths) && (
+                <div className="bg-[#111111] border border-white/8 p-3 text-center">
+                  <Bath size={16} className="text-[#C9A84C] mx-auto mb-1" />
+                  <p className="text-white" style={{ fontFamily: "Playfair Display, serif", fontSize: "1.1rem" }}>{property.baths}</p>
+                  <p className="text-white/40" style={{ fontSize: "0.55rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>Baños</p>
+                </div>
+              )}
+              {hasValue(property.area) && (
+                <div className="bg-[#111111] border border-white/8 p-3 text-center">
+                  <Maximize2 size={16} className="text-[#C9A84C] mx-auto mb-1" />
+                  <p className="text-white" style={{ fontFamily: "Playfair Display, serif", fontSize: "1.1rem" }}>{property.area}</p>
+                  <p className="text-white/40" style={{ fontSize: "0.55rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>m²</p>
+                </div>
+              )}
             </div>
 
             <p className="text-white/55 mb-6 leading-relaxed" style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "1.05rem", lineHeight: 1.8 }}>
@@ -300,7 +332,7 @@ export function PropertyDetail() {
               ) : (
                 <>
                   <a
-                    href={buildWhatsAppUrl(property)}
+                    href={buildWhatsAppUrl(property, offer)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full py-4 flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1ebe5d] text-white transition-colors duration-300"
@@ -355,7 +387,7 @@ export function PropertyDetail() {
           </div>
           <div className="flex gap-3 shrink-0">
             <a
-              href={buildWhatsAppUrl(property)}
+              href={buildWhatsAppUrl(property, offer)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-6 py-3 bg-[#25D366] hover:bg-[#1ebe5d] text-white transition-colors duration-300"
