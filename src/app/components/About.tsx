@@ -30,12 +30,12 @@ export function About() {
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           
           {/* Image Side */}
-          <div className="relative order-2 lg:order-1">
-            <div className="relative overflow-hidden max-w-md mx-auto lg:max-w-none">
+          <div className="relative order-2 lg:order-1 w-full max-w-[420px] lg:max-w-[460px] mx-auto">
+            <div className="relative overflow-hidden">
               <img
                 src="/lily-ruiz.webp"
                 alt="Lily Ruiz, CEO de Prestige House"
-                className="w-full aspect-[4/5] lg:aspect-auto lg:h-[560px] object-cover object-top"
+                className="w-full h-[300px] sm:h-[400px] lg:h-[440px] object-cover object-top"
               />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-6 pt-16 pb-6">
                 <p className="text-white" style={{ fontFamily: "Playfair Display, serif", fontSize: "1.5rem", fontWeight: 600 }}>
