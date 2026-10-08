@@ -1,7 +1,5 @@
 import { Shield, Star, Key, TrendingUp } from "lucide-react";
 
-const aboutImage = "https://content.r9cdn.net/rimg/dimg/5b/19/50967fdb-city-43889-158b09eaf11.jpg?crop=true&width=1020&height=498";
-
 const services = [
   {
     icon: Key,
@@ -33,13 +31,20 @@ export function About() {
           
           {/* Image Side */}
           <div className="relative order-2 lg:order-1">
-            <div className="relative overflow-hidden">
+            <div className="relative overflow-hidden max-w-md mx-auto lg:max-w-none">
               <img
-                src={aboutImage}
-                alt="Propiedades de lujo"
-                className="w-full h-[300px] sm:h-[400px] lg:h-[500px] object-cover"
+                src="/lily-ruiz.webp"
+                alt="Lily Ruiz, CEO de Prestige House"
+                className="w-full aspect-[4/5] lg:aspect-auto lg:h-[560px] object-cover object-top"
               />
-              <div className="absolute inset-0 bg-gradient-to-tr from-black/40 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-6 pt-16 pb-6">
+                <p className="text-white" style={{ fontFamily: "Playfair Display, serif", fontSize: "1.5rem", fontWeight: 600 }}>
+                  Lily Ruiz
+                </p>
+                <p className="text-[#C9A84C] mt-1 uppercase tracking-[0.2em] text-[0.65rem]" style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500 }}>
+                  CEO Prestige House
+                </p>
+              </div>
             </div>
             
             <div className="absolute -top-3 -left-3 w-16 h-16 sm:w-32 sm:h-32 border-t-2 border-l-2 border-[#C9A84C]" />
