@@ -49,7 +49,7 @@ export function Footer() {
               className="text-white/40 mb-6"
               style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "0.95rem", lineHeight: 1.8 }}
             >
-              La inmobiliaria de mayor prestigio en Guatemala, con más de 10 años
+              La inmobiliaria de mayor prestigio en Guatemala, con años
               conectando personas con propiedades exclusivas.
             </p>
             <div className="flex items-center gap-3">

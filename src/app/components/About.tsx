@@ -30,31 +30,31 @@ export function About() {
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           
           {/* Image Side */}
-          <div className="relative order-2 lg:order-1 w-full max-w-[420px] lg:max-w-[460px] mx-auto">
+          <div className="relative order-2 lg:order-1 w-full max-w-[330px] lg:max-w-[360px] mx-auto">
             <div className="relative overflow-hidden">
               <img
                 src="/lily-ruiz.webp"
                 alt="Lily Ruiz, CEO de Prestige House"
-                className="w-full h-[300px] sm:h-[400px] lg:h-[440px] object-cover object-top"
+                className="w-full h-[235px] sm:h-[315px] lg:h-[345px] object-cover object-top"
               />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-6 pt-16 pb-6">
-                <p className="text-white" style={{ fontFamily: "Playfair Display, serif", fontSize: "1.5rem", fontWeight: 600 }}>
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-4 pt-12 pb-4">
+                <p className="text-white" style={{ fontFamily: "Playfair Display, serif", fontSize: "1.2rem", fontWeight: 600 }}>
                   Lily Ruiz
                 </p>
-                <p className="text-[#C9A84C] mt-1 uppercase tracking-[0.2em] text-[0.65rem]" style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500 }}>
+                <p className="text-[#C9A84C] mt-1 uppercase tracking-[0.2em] text-[0.54rem]" style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500 }}>
                   CEO Prestige House
                 </p>
               </div>
             </div>
             
-            <div className="absolute -top-3 -left-3 w-16 h-16 sm:w-32 sm:h-32 border-t-2 border-l-2 border-[#C9A84C]" />
-            <div className="absolute -bottom-3 -right-3 w-16 h-16 sm:w-32 sm:h-32 border-b-2 border-r-2 border-[#C9A84C]" />
+            <div className="absolute -top-3 -left-3 w-12 h-12 sm:w-24 sm:h-24 border-t-2 border-l-2 border-[#C9A84C]" />
+            <div className="absolute -bottom-3 -right-3 w-12 h-12 sm:w-24 sm:h-24 border-b-2 border-r-2 border-[#C9A84C]" />
             
-            <div className="absolute bottom-8 -right-6 bg-[#C9A84C] p-6 hidden lg:block shadow-xl">
-              <p className="text-black font-bold text-3xl" style={{ fontFamily: "Playfair Display, serif", lineHeight: 1 }}>
+            <div className="absolute bottom-5 -right-4 bg-[#C9A84C] p-4 hidden lg:block shadow-xl">
+              <p className="text-black font-bold text-2xl" style={{ fontFamily: "Playfair Display, serif", lineHeight: 1 }}>
                 3+
               </p>
-              <p className="text-black/80 mt-1 uppercase text-[0.6rem] tracking-[0.15em]" style={{ fontFamily: "Montserrat, sans-serif" }}>
+              <p className="text-black/80 mt-1 uppercase text-[0.5rem] tracking-[0.15em]" style={{ fontFamily: "Montserrat, sans-serif" }}>
                 Años de<br />Experiencia
               </p>
             </div>
